@@ -18,9 +18,11 @@ export default function Dashboard() {
   const [farmData, setFarmData] = useState<FarmData | null>(null)
 
   useEffect(() => {
-    const data = localStorage.getItem('farmData')
-    if (data) {
-      setFarmData(JSON.parse(data))
+    if (typeof window !== 'undefined') {
+      const data = localStorage.getItem('farmData')
+      if (data) {
+        setFarmData(JSON.parse(data))
+      }
     }
   }, [])
 

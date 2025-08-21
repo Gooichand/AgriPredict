@@ -9,6 +9,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  swcMinify: true,
+  experimental: {
+    esmExternals: false
+  }
 }
 
 module.exports = nextConfig

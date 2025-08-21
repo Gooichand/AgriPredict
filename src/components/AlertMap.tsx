@@ -20,14 +20,16 @@ export default function AlertMap() {
   const [mapKey, setMapKey] = useState(0)
 
   useEffect(() => {
-    const data = localStorage.getItem('farmData')
-    if (data) {
-      const parsed = JSON.parse(data)
-      setFarmData(parsed)
-      
-      // Get coordinates for the location
-      if (parsed.location) {
-        getLocationCoordinates(parsed.location)
+    if (typeof window !== 'undefined') {
+      const data = localStorage.getItem('farmData')
+      if (data) {
+        const parsed = JSON.parse(data)
+        setFarmData(parsed)
+        
+        // Get coordinates for the location
+        if (parsed.location) {
+          getLocationCoordinates(parsed.location)
+        }
       }
     }
   }, [])

@@ -170,12 +170,14 @@ export default function CropSetupPage() {
 
   // Automatically get location on page load
   useEffect(() => {
-    getDeviceLocation()
+    if (typeof window !== 'undefined') {
+      getDeviceLocation()
+    }
   }, [])
 
   const getDeviceLocation = async () => {
     setIsGettingLocation(true)
-    if (navigator.geolocation) {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const lat = position.coords.latitude
@@ -216,11 +218,13 @@ export default function CropSetupPage() {
     e.preventDefault()
     
     // Store data in localStorage
-    localStorage.setItem('farmData', JSON.stringify({
-      location,
-      crop,
-      farmSize
-    }))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('farmData', JSON.stringify({
+        location,
+        crop,
+        farmSize
+      }))
+    }
     
     router.push('/dashboard')
   }
