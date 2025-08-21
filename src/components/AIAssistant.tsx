@@ -94,7 +94,7 @@ export default function AIAssistant({ farmData }: AIAssistantProps) {
       </div>
       
       <div className="mt-3 text-xs text-gray-500">
-        💡 Ask anything: "How to increase yield?", "When to harvest?", "Disease prevention?", "Best fertilizer?"
+        💡 Powered by Google Gemini AI - Ask: "How to increase yield?", "Disease prevention?", "Best fertilizer?"
       </div>
     </div>
   )
