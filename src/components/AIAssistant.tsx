@@ -24,27 +24,62 @@ export default function AIAssistant({ farmData }: AIAssistantProps) {
     setLoading(true)
 
     try {
-      // Call server-side API for real AI
-      const response = await fetch('/api/chat', {
+      // Direct Google Gemini API call
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyBmYCbl9o23oNiA_rzro1h6A0KKpl8l580`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: currentInput,
-          farmData: farmData
+          contents: [{
+            parts: [{
+              text: `You are an expert agricultural advisor. The user has a ${farmData.crop} farm in ${farmData.location} covering ${farmData.farmSize} acres. User question: ${currentInput}. Provide practical farming advice in 2-3 sentences.`
+            }]
+          }]
         })
       })
       
       const data = await response.json()
-      const aiResponse = data.response || 'I\'m here to help with your farming questions!'
+      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text
       
-      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }])
+      if (aiResponse) {
+        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse.trim() }])
+      } else {
+        throw new Error('No AI response')
+      }
     } catch (error) {
-      // Fallback to client-side AI
-      const fallbackResponse = await AIService.generateAIResponse(currentInput, farmData)
+      // Smart fallback
+      const fallbackResponse = getSmartResponse(currentInput, farmData)
       setMessages(prev => [...prev, { role: 'assistant', content: fallbackResponse }])
     }
     
     setLoading(false)
+  }
+
+  const getSmartResponse = (input: string, farmData: any) => {
+    const lowerInput = input.toLowerCase()
+    const crop = farmData.crop
+    const location = farmData.location
+    
+    if (lowerInput.includes('yield') || lowerInput.includes('increase') || lowerInput.includes('production')) {
+      return `To increase ${crop} yield in ${location}: Use high-quality seeds, apply balanced NPK fertilizer (120:60:40 kg/hectare), maintain proper plant spacing, ensure adequate irrigation during critical growth stages, and implement integrated pest management. These practices can boost yield by 20-30%.`
+    }
+    
+    if (lowerInput.includes('disease') || lowerInput.includes('pest') || lowerInput.includes('problem')) {
+      return `For ${crop} disease/pest management in ${location}: Regular field monitoring is crucial. Apply preventive fungicides/pesticides during vulnerable stages. Use resistant varieties when available. Maintain field hygiene by removing infected plants. Consider biological control methods alongside chemical treatments.`
+    }
+    
+    if (lowerInput.includes('fertilizer') || lowerInput.includes('nutrition') || lowerInput.includes('feed')) {
+      return `${crop} fertilizer recommendations: Conduct soil testing first. Apply basal dose of NPK at planting, followed by top-dressing with urea during vegetative growth. Use organic matter like farmyard manure (5-10 tons/hectare). Split applications prevent nutrient losses and improve uptake efficiency.`
+    }
+    
+    if (lowerInput.includes('water') || lowerInput.includes('irrigation') || lowerInput.includes('drought')) {
+      return `Water management for ${crop}: Maintain soil moisture at 70-80% field capacity. Critical irrigation periods are flowering and grain filling stages. Use drip irrigation to save 40% water. Mulching helps retain soil moisture. Monitor weather forecasts for irrigation scheduling.`
+    }
+    
+    if (lowerInput.includes('harvest') || lowerInput.includes('ready') || lowerInput.includes('when')) {
+      return `${crop} harvest timing: Monitor physiological maturity indicators like grain color and moisture content (20-25% for most crops). Harvest during dry weather to prevent quality deterioration. Use proper harvesting techniques to minimize losses. Plan post-harvest storage in advance.`
+    }
+    
+    return `For your ${crop} farm in ${location}: Focus on soil health management, timely field operations, balanced nutrition, efficient water use, and integrated pest management. Regular monitoring and following scientific practices will optimize your farming success and profitability.`
   }
 
   return (
