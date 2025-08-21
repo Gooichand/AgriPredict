@@ -1,7 +1,3 @@
-Absolutely! Here's a stylish, well-structured, and visually engaging version of your GitHub README for **KisanSafe** — designed to impress developers, contributors, and users alike:
-
----
-
 # 🌾 KisanSafe — AI-Powered Smart Crop Yield Forecasting
 
 A cutting-edge web application delivering AI-driven crop yield predictions, personalized farming recommendations, and real-time agricultural insights to empower farmers across India and beyond.
