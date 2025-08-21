@@ -24,11 +24,24 @@ export default function AIAssistant({ farmData }: AIAssistantProps) {
     setLoading(true)
 
     try {
-      // Use real AI for dynamic responses
-      const response = await AIService.generateAIResponse(currentInput, farmData)
-      setMessages(prev => [...prev, { role: 'assistant', content: response }])
+      // Call server-side API for real AI
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: currentInput,
+          farmData: farmData
+        })
+      })
+      
+      const data = await response.json()
+      const aiResponse = data.response || 'I\'m here to help with your farming questions!'
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }])
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'I apologize, but I\'m having trouble connecting to my AI systems right now. Please try asking your question again in a moment.' }])
+      // Fallback to client-side AI
+      const fallbackResponse = await AIService.generateAIResponse(currentInput, farmData)
+      setMessages(prev => [...prev, { role: 'assistant', content: fallbackResponse }])
     }
     
     setLoading(false)
