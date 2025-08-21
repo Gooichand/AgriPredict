@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'AgriPredict - Smart Crop Yield Forecasting',
+  title: 'KisanSafe - Smart Crop Yield Forecasting',
   description: 'Predict crop yields and get farmer alerts with AI-powered insights',
 }
 

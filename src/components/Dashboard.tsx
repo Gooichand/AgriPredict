@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import YieldChart from './YieldChart'
 import AlertMap from './AlertMap'
+import AIAssistant from './AIAssistant'
+import AIRecommendations from './AIRecommendations'
+import CropHealthAnalysis from './CropHealthAnalysis'
 import Link from 'next/link'
 
 interface FarmData {
@@ -117,7 +120,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Welcome to AgriPredict!</h2>
+          <h2 className="text-2xl font-bold mb-4">Welcome to KisanSafe!</h2>
           <p className="mb-4">Please set up your farm information first.</p>
           <Link href="/crop-setup" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
             Set Up Farm
@@ -131,7 +134,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-green-600 text-white p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">AgriPredict Dashboard</h1>
+          <h1 className="text-2xl font-bold">KisanSafe Dashboard</h1>
           <Link href="/" className="bg-white text-green-600 px-4 py-2 rounded hover:bg-gray-100">
             Home
           </Link>
@@ -182,9 +185,21 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">Alert Map</h3>
-          <AlertMap />
+        <div className="mt-6">
+          <AIRecommendations farmData={farmData} />
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-semibold mb-4">Alert Map</h3>
+            <AlertMap />
+          </div>
+          
+          <AIAssistant farmData={farmData} />
+        </div>
+
+        <div className="mt-6">
+          <CropHealthAnalysis farmData={farmData} />
         </div>
 
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
