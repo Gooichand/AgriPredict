@@ -89,8 +89,7 @@ A cutting-edge web application delivering AI-driven crop yield predictions, pers
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/kisansafe.git
-
+git clone https://github.com/Gooichand/AgriPredict
 # Install dependencies
 npm install
 
