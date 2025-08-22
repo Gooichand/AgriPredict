@@ -30,17 +30,62 @@ export default function Dashboard() {
 
   const getCropYield = (crop: string) => {
     const yields: { [key: string]: string } = {
-      rice: '5.3',
-      wheat: '3.8',
-      corn: '6.8',
-      cotton: '2.0',
-      sugarcane: '45.2',
-      soybean: '2.8',
-      potato: '22.5',
-      tomato: '18.3',
-      onion: '15.7'
+      // Cereals & Grains (tons/acre)
+      rice: '4.2', wheat: '3.1', corn: '5.8', barley: '2.9', millet: '1.8',
+      oats: '2.4', quinoa: '1.2', rye: '2.7', sorghum: '3.5', amaranth: '1.5',
+      
+      // Legumes & Pulses (tons/acre)
+      chickpea: '1.8', lentil: '1.4', soybean: '2.6', 'black beans': '2.1',
+      'kidney beans': '1.9', 'navy beans': '2.0', 'split peas': '1.7',
+      'mung beans': '1.3', 'pigeon peas': '1.6',
+      
+      // Vegetables - Leafy (tons/acre)
+      spinach: '8.5', lettuce: '12.3', cabbage: '25.7', kale: '9.2',
+      'mustard greens': '7.8', 'swiss chard': '8.9', arugula: '6.4',
+      
+      // Vegetables - Root & Tuber (tons/acre)
+      potato: '18.5', 'sweet potato': '16.2', carrot: '22.8', beet: '19.4',
+      radish: '15.6', turnip: '17.3', ginger: '8.7', cassava: '12.4',
+      
+      // Vegetables - Nightshades (tons/acre)
+      tomato: '28.6', eggplant: '14.7', pepper: '12.9', 'bell pepper': '15.3',
+      'chili pepper': '3.8', jalapeno: '4.2',
+      
+      // Vegetables - Cucurbits (tons/acre)
+      cucumber: '16.8', watermelon: '24.5', pumpkin: '19.7', squash: '17.2',
+      zucchini: '21.3', melon: '18.9', 'bitter gourd': '8.4',
+      
+      // Vegetables - Others (tons/acre)
+      onion: '13.8', garlic: '4.6', okra: '6.7', asparagus: '3.2',
+      celery: '24.1', broccoli: '8.9', cauliflower: '12.4',
+      
+      // Fruits - Tree Fruits (tons/acre)
+      apple: '18.2', mango: '12.7', orange: '15.4', banana: '22.8',
+      grape: '8.9', peach: '14.6', pear: '16.3', cherry: '6.8',
+      
+      // Cash Crops (tons/acre)
+      cotton: '1.8', sugarcane: '52.3', tea: '2.1', coffee: '1.4',
+      tobacco: '2.9', jute: '3.2', hemp: '2.7',
+      
+      // Oil Crops (tons/acre)
+      sunflower: '1.9', mustard: '1.6', canola: '2.1', safflower: '1.4',
+      
+      // Herbs & Spices (tons/acre)
+      basil: '2.8', mint: '3.4', coriander: '1.2', turmeric: '4.6',
+      cumin: '0.8', fenugreek: '1.1', oregano: '1.9',
+      
+      // Nuts & Seeds (tons/acre)
+      peanut: '3.2', sesame: '0.9', 'sunflower seeds': '1.7',
+      'pumpkin seeds': '1.3', 'chia seeds': '0.8',
+      
+      // Fodder Crops (tons/acre)
+      alfalfa: '6.8', clover: '5.2', 'timothy grass': '4.1',
+      
+      // Specialty Crops (tons/acre)
+      mushrooms: '12.4', 'aloe vera': '8.7', stevia: '2.1',
+      bamboo: '15.6', hops: '1.8'
     }
-    return yields[crop] || '5.2'
+    return yields[crop.toLowerCase()] || '4.5'
   }
 
   const getCropAlert = (crop: string) => {
@@ -168,6 +213,9 @@ export default function Dashboard() {
             <h3 className="text-xl font-semibold mb-2">Predicted Yield</h3>
             <p className="text-3xl font-bold text-green-600">
               {getCropYield(farmData.crop)} tons/acre
+            </p>
+            <p className="text-lg text-green-500 mt-1">
+              Total: {(parseFloat(getCropYield(farmData.crop)) * parseFloat(farmData.farmSize)).toFixed(1)} tons
             </p>
             <p className="text-sm text-gray-500 mt-2">For {farmData.farmSize} acres</p>
           </div>
