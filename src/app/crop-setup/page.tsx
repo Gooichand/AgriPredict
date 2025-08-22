@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import ChatBot from '@/components/ChatBot'
 import { LocationService } from '@/lib/locationService'
+import { CropValidationService } from '@/lib/cropValidationService'
 
 interface LocationData {
   Name: string;
@@ -27,6 +29,12 @@ export default function CropSetupPage() {
   const [locationLoading, setLocationLoading] = useState(false)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null)
+  const [validationResult, setValidationResult] = useState<{
+    isSuitable: boolean;
+    message: string;
+    confidence: 'high' | 'medium' | 'low';
+    recommendations?: string[];
+  } | null>(null)
   
   const router = useRouter()
   const { t } = useLanguage()
@@ -561,6 +569,13 @@ export default function CropSetupPage() {
             
             if (pincodeData.length > 0) {
               alert(`✅ Location detected: ${locationName} (PIN: ${detectedPincode})`);
+              // Auto-select first location and validate crop if selected
+              if (pincodeData[0]) {
+                setSelectedLocation(pincodeData[0]);
+                if (crop) {
+                  validateCropSuitability(crop, pincodeData[0].State);
+                }
+              }
             } else {
               alert(`Pincode ${detectedPincode} detected but no postal data found. Try manual search.`);
             }
@@ -574,6 +589,13 @@ export default function CropSetupPage() {
             
             if (cityData.length > 0) {
               alert(`✅ Location detected: ${locationName}`);
+              // Auto-select first location and validate crop if selected
+              if (cityData[0]) {
+                setSelectedLocation(cityData[0]);
+                if (crop) {
+                  validateCropSuitability(crop, cityData[0].State);
+                }
+              }
             } else {
               alert(`Location detected as ${locationName}, but no postal data found. Try manual search.`);
             }
@@ -626,6 +648,15 @@ export default function CropSetupPage() {
         postOffice: location.Name
       }));
     }
+    // Validate crop if already selected
+    if (crop) {
+      validateCropSuitability(crop, location.State);
+    }
+  }
+
+  const validateCropSuitability = (cropName: string, state: string) => {
+    const result = CropValidationService.validateCropSuitability(cropName, state);
+    setValidationResult(result);
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -779,8 +810,29 @@ export default function CropSetupPage() {
                   setCropSearch(e.target.value)
                   setCrop('')
                   setShowCropList(true)
+                  setValidationResult(null) // Clear previous validation
                 }}
                 onFocus={() => setShowCropList(true)}
+                onBlur={(e) => {
+                  // Validate crop when user finishes typing
+                  setTimeout(() => {
+                    const inputValue = e.target.value.trim();
+                    if (inputValue && selectedLocation && !crop) {
+                      setCrop(inputValue.toLowerCase());
+                      validateCropSuitability(inputValue.toLowerCase(), selectedLocation.State);
+                    }
+                  }, 200);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && cropSearch.trim() && selectedLocation) {
+                    e.preventDefault();
+                    const inputValue = cropSearch.trim();
+                    setCrop(inputValue.toLowerCase());
+                    setCropSearch('');
+                    setShowCropList(false);
+                    validateCropSuitability(inputValue.toLowerCase(), selectedLocation.State);
+                  }
+                }}
                 className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 style={{backgroundColor: '#ffffff', borderColor: '#95a5a6', color: '#2c3e2d'}}
                 required
@@ -792,9 +844,14 @@ export default function CropSetupPage() {
                       <div
                         key={cropName}
                         onClick={() => {
-                          setCrop(cropName.toLowerCase())
+                          const selectedCrop = cropName.toLowerCase();
+                          setCrop(selectedCrop)
                           setCropSearch('')
                           setShowCropList(false)
+                          // Validate crop if location is selected
+                          if (selectedLocation) {
+                            validateCropSuitability(selectedCrop, selectedLocation.State);
+                          }
                         }}
                         className="p-3 hover:bg-green-100 cursor-pointer border-b border-green-100 last:border-b-0"
                       >
@@ -809,6 +866,42 @@ export default function CropSetupPage() {
               {crop && (
                 <div className="mt-2 text-sm text-green-700 font-medium">
                   Selected: {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                </div>
+              )}
+              
+              {/* Crop Validation Message */}
+              {validationResult && selectedLocation && crop && (
+                <div className={`mt-3 p-3 rounded-lg border ${
+                  validationResult.isSuitable 
+                    ? validationResult.confidence === 'high' 
+                      ? 'bg-green-50 border-green-200 text-green-800'
+                      : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                    : 'bg-red-50 border-red-200 text-red-800'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">
+                      {validationResult.isSuitable 
+                        ? validationResult.confidence === 'high' ? '✅' : '⚠️'
+                        : '⚠️'
+                      }
+                    </span>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{validationResult.message}</div>
+                      {validationResult.recommendations && validationResult.recommendations.length > 0 && (
+                        <div className="mt-2">
+                          <div className="text-xs font-medium mb-1">Recommendations:</div>
+                          <ul className="text-xs space-y-1">
+                            {validationResult.recommendations.map((rec, index) => (
+                              <li key={index} className="flex items-start gap-1">
+                                <span className="text-gray-400">•</span>
+                                <span>{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -838,6 +931,9 @@ export default function CropSetupPage() {
           </div>
         </div>
       </main>
+      
+      {/* Enhanced AI Chatbot */}
+      <ChatBot />
     </div>
   )
 }

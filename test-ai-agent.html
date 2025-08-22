@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KisanSafe AI Agent Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .user-message {
+            background: #4CAF50;
+            color: white;
+            text-align: right;
+        }
+        .bot-message {
+            background: #e3f2fd;
+            color: #333;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .feature-list {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .feature-list h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        .feature-list ul {
+            margin: 10px 0;
+        }
+        .feature-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 KisanSafe AI Agent - Test Interface</h1>
+        
+        <div class="feature-list">
+            <h3>🤖 Enhanced AI Features</h3>
+            <ul>
+                <li>✅ <strong>Generative AI Integration</strong> - Gemini API with OpenAI fallback</li>
+                <li>✅ <strong>Context Awareness</strong> - Remembers conversation history</li>
+                <li>✅ <strong>Multilingual Support</strong> - English, Hindi, Telugu</li>
+                <li>✅ <strong>Voice Input/Output</strong> - Speech recognition and synthesis</li>
+                <li>✅ <strong>Crop Validation</strong> - Smart crop-location suitability checks</li>
+                <li>✅ <strong>Farmer-Friendly Responses</strong> - Practical, actionable advice</li>
+            </ul>
+        </div>
+
+        <div class="feature-list">
+            <h3>🎯 Test Scenarios</h3>
+            <p>Try asking these questions to test the AI agent:</p>
+            <ul>
+                <li><strong>Crop Advice:</strong> "Can I grow rice in Rajasthan?"</li>
+                <li><strong>Fertilizer Help:</strong> "Which fertilizer is good for cotton?"</li>
+                <li><strong>Weather Queries:</strong> "What's the best time to plant wheat?"</li>
+                <li><strong>Market Prices:</strong> "Tell me about today's market prices"</li>
+                <li><strong>Disease Control:</strong> "How to treat tomato blight?"</li>
+                <li><strong>Hindi Questions:</strong> "धान की खेती कैसे करें?"</li>
+                <li><strong>Telugu Questions:</strong> "వరి సాగు ఎలా చేయాలి?"</li>
+            </ul>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                🌾 <strong>KisanSafe AI Agent Ready!</strong><br>
+                I'm your intelligent farming assistant. I can help you with:
+                <ul>
+                    <li>Crop yield predictions & recommendations</li>
+                    <li>Weather alerts & farming tips</li>
+                    <li>Market prices & selling strategies</li>
+                    <li>Disease identification & treatment</li>
+                    <li>Government schemes & subsidies</li>
+                    <li>Multilingual support (English, Hindi, Telugu)</li>
+                </ul>
+                Ask me anything about farming! 🚜
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Ask your farming question..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send 📤</button>
+            <button onclick="testVoice()" id="voiceBtn">🎤 Voice</button>
+        </div>
+
+        <div class="feature-list">
+            <h3>🔧 Implementation Details</h3>
+            <ul>
+                <li><strong>AI Service:</strong> AIAgentService with Gemini API integration</li>
+                <li><strong>Voice Service:</strong> Web Speech API for recognition and synthesis</li>
+                <li><strong>Validation Service:</strong> CropValidationService for location-crop matching</li>
+                <li><strong>Context Management:</strong> Conversation history with 10-message limit</li>
+                <li><strong>Fallback System:</strong> Rule-based responses when AI APIs fail</li>
+                <li><strong>Responsive UI:</strong> Fixed bottom-right chatbot with green theme</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let conversationHistory = [];
+        
+        function addMessage(text, isUser = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            input.value = '';
+
+            // Simulate AI response (in real app, this would call the AI service)
+            addMessage('🤖 <em>Thinking...</em>');
+            
+            setTimeout(() => {
+                // Remove thinking message
+                const messages = document.querySelectorAll('.message');
+                messages[messages.length - 1].remove();
+                
+                // Add simulated response
+                const responses = {
+                    'rice': '🌾 <strong>Rice Cultivation Tips:</strong><br><br>• <strong>Soil:</strong> Loamy soil is best<br>• <strong>Water:</strong> Maintain 3-5cm standing water<br>• <strong>Seeds:</strong> 20-25 kg per hectare<br>• <strong>Fertilizer:</strong> NPK 120:60:40 kg/hectare<br>• <strong>Timing:</strong> Transplant in June-July<br><br>⚠️ <strong>Warning:</strong> Excess water can cause root rot!',
+                    'fertilizer': '🌱 <strong>Smart Fertilizer Guide:</strong><br><br>• <strong>Soil Test:</strong> Check pH and NPK levels first<br>• <strong>Organic:</strong> 5-10 tons farmyard manure/hectare<br>• <strong>Chemical:</strong> NPK ratio based on crop needs<br>• <strong>Timing:</strong> Base dose + top dressing after 30-45 days<br><br>💡 <strong>Tip:</strong> Over-fertilization damages crops and soil!',
+                    'cotton': '🌾 <strong>Cotton Fertilizer Recommendations:</strong><br><br>• <strong>Early Stage:</strong> Nitrogen-rich fertilizer (Urea 100kg/hectare)<br>• <strong>Flowering:</strong> Potassium for better yield (MOP 50kg/hectare)<br>• <strong>Organic:</strong> Well-decomposed farmyard manure<br>• <strong>Micronutrients:</strong> Zinc and Boron supplements<br><br>⚠️ <strong>Timing:</strong> Apply in split doses for best results!',
+                    'rajasthan': '🌾 <strong>Rice in Rajasthan Analysis:</strong><br><br>⚠️ Rice is <strong>not suitable</strong> for Rajasthan due to:<br>• Low rainfall (200-400mm annually)<br>• High water requirement of rice<br>• Arid climate conditions<br><br>🌱 <strong>Better alternatives:</strong><br>• Bajra (Pearl Millet) - drought resistant<br>• Jowar (Sorghum) - low water needs<br>• Wheat (in winter with irrigation)<br><br>💡 <strong>Tip:</strong> Choose crops suited to your climate!'
+                };
+                
+                let response = '🤖 <strong>KisanSafe AI Response:</strong><br><br>I understand your farming question! In the actual application, I would provide detailed, contextual advice based on:<br><br>• Your specific location and climate<br>• Current weather conditions<br>• Crop growth stage<br>• Market prices<br>• Government schemes<br><br>The AI agent supports multiple languages and remembers our conversation for better context. Try the live application for full functionality! 🌾';
+                
+                // Check for specific keywords
+                const lowerMessage = message.toLowerCase();
+                if (lowerMessage.includes('rice') && lowerMessage.includes('rajasthan')) {
+                    response = responses.rajasthan;
+                } else if (lowerMessage.includes('rice')) {
+                    response = responses.rice;
+                } else if (lowerMessage.includes('fertilizer') && lowerMessage.includes('cotton')) {
+                    response = responses.cotton;
+                } else if (lowerMessage.includes('fertilizer')) {
+                    response = responses.fertilizer;
+                }
+                
+                addMessage(response);
+            }, 1500);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function testVoice() {
+            const btn = document.getElementById('voiceBtn');
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                btn.textContent = '🔴 Listening...';
+                addMessage('🎤 <em>Voice input activated! Speak your question...</em>');
+                
+                setTimeout(() => {
+                    btn.textContent = '🎤 Voice';
+                    addMessage('🤖 Voice feature works in the live application! Try asking: "How to grow rice?" or "धान की खेती कैसे करें?"');
+                }, 2000);
+            } else {
+                addMessage('❌ Voice recognition not supported in this browser. Try Chrome or Edge.');
+            }
+        }
+
+        // Initialize
+        document.getElementById('messageInput').focus();
+    </script>
+</body>
+</html>
