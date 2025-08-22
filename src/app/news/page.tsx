@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 interface NewsItem {
   title: string
@@ -16,6 +18,7 @@ export default function NewsPage() {
   const [news, setNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('all')
+  const { t } = useLanguage()
 
   useEffect(() => {
     loadFarmingNews()
@@ -211,13 +214,16 @@ export default function NewsPage() {
       <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/crop-setup" className="text-2xl font-bold flex items-center gap-2">
-            🌾 KISAN SAFE 🚜
+            {t('title')}
           </Link>
-          <div className="flex gap-6">
-            <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
-            <Link href="/about" className="hover:text-yellow-200">About</Link>
-            <Link href="/contact" className="hover:text-yellow-200">Helplines</Link>
-            <Link href="/news" className="hover:text-yellow-200 font-semibold">News</Link>
+          <div className="flex items-center gap-6">
+            <div className="flex gap-6">
+              <Link href="/crop-setup" className="hover:text-yellow-200">{t('home')}</Link>
+              <Link href="/about" className="hover:text-yellow-200">{t('about')}</Link>
+              <Link href="/contact" className="hover:text-yellow-200">{t('helplines')}</Link>
+              <Link href="/news" className="hover:text-yellow-200 font-semibold">{t('news')}</Link>
+            </div>
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>
@@ -226,7 +232,7 @@ export default function NewsPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-4xl font-bold text-green-700">
-              📰 Latest Farming News
+              {t('newsTitle')}
             </h1>
             <button
               onClick={loadFarmingNews}
