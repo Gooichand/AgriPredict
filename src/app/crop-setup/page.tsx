@@ -534,14 +534,14 @@ export default function CropSetupPage() {
         <div className="bg-white/20 backdrop-blur-lg p-8 rounded-xl shadow-2xl border-2 border-white/30 w-full max-w-lg text-base relative overflow-hidden">
           {/* Content */}
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-6 text-center uppercase text-white/90 backdrop-blur-md bg-black/20 p-4 rounded-lg border border-white/20 flex items-center justify-center gap-2">
+            <h2 className="text-3xl font-bold mb-6 text-center uppercase text-white backdrop-blur-md bg-black/20 p-4 rounded-lg border border-white/20 flex items-center justify-center gap-2">
               🌱 Tell us about your farm 🌾
             </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-white">🏡 Where is your farm located?</label>
-              <p className="text-xs text-white/80 mb-3">
+              <p className="text-xs text-white mb-3">
                 {isGettingLocation ? '📍 Getting your location...' : 'We automatically detected your location, or enter manually'}
               </p>
               
@@ -557,7 +557,7 @@ export default function CropSetupPage() {
                       setShowLocationList(true)
                     }}
                     onFocus={() => setShowLocationList(true)}
-                    className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50"
+                    className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
                     required
                   />
                   {isGettingLocation && (
@@ -613,7 +613,7 @@ export default function CropSetupPage() {
             </div>
 
             <div className="relative">
-              <label className="block text-sm font-medium mb-2 text-green-700">🌾 What crop are you growing?</label>
+              <label className="block text-sm font-medium mb-2 text-white">🌾 What crop are you growing?</label>
               <input
                 type="text"
                 placeholder="Search for your crop (e.g., Rice, Wheat, Tomato)"
@@ -624,7 +624,7 @@ export default function CropSetupPage() {
                   setShowCropList(true)
                 }}
                 onFocus={() => setShowCropList(true)}
-                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50"
+                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
                 required
               />
               {showCropList && (
@@ -656,13 +656,13 @@ export default function CropSetupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-green-700">🚜 Farm Size (acres)</label>
+              <label className="block text-sm font-medium mb-2 text-white">🚜 Farm Size (acres)</label>
               <input
                 type="number"
                 placeholder="Enter farm size"
                 value={farmSize}
                 onChange={(e) => setFarmSize(e.target.value)}
-                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50"
+                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
                 required
               />
             </div>
