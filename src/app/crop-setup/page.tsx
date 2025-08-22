@@ -41,12 +41,20 @@ export default function CropSetupPage() {
   const filteredCrops = crops.filter(cropName => 
     cropName.toLowerCase().includes(cropSearch.toLowerCase())
   )
-
   const handleLocationSelect = (location: LocationData) => {
     setSelectedLocation(location);
     if (crop) {
       validateCropSuitability(crop, location.State);
     }
+    // Validate crop if already selected
+    if (crop) {
+      validateCropSuitability(crop, location.State);
+    }
+  }
+
+  const validateCropSuitability = (cropName: string, state: string) => {
+    const result = CropValidationService.validateCropSuitability(cropName, state);
+    setValidationResult(result);
   }
 
   const validateCropSuitability = (cropName: string, state: string) => {
@@ -113,28 +121,44 @@ export default function CropSetupPage() {
                   setCropSearch(e.target.value)
                   setCrop('')
                   setShowCropList(true)
+                  setValidationResult(null) // Clear previous validation
                 }}
-                className="w-full p-3 border rounded-lg"
-                required
-              />
-              {showCropList && (
-                <div className="absolute z-10 w-full bg-white border rounded-lg mt-1 max-h-48 overflow-y-auto">
-                  {filteredCrops.map((cropName) => (
-                    <div
-                      key={cropName}
-                      onClick={() => {
-                        setCrop(cropName.toLowerCase())
-                        setCropSearch('')
-                        setShowCropList(false)
-                        if (selectedLocation) {
-                          validateCropSuitability(cropName.toLowerCase(), selectedLocation.State);
-                        }
-                      }}
-                      className="p-3 hover:bg-green-100 cursor-pointer"
-                    >
-                      {cropName}
+                </div>
+              )}
+              
+              {/* Crop Validation Message */}
+              {validationResult && selectedLocation && crop && (
+                <div className={`mt-3 p-3 rounded-lg border ${
+                  validationResult.isSuitable 
+                    ? validationResult.confidence === 'high' 
+                      ? 'bg-green-50 border-green-200 text-green-800'
+                      : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                    : 'bg-red-50 border-red-200 text-red-800'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">
+                      {validationResult.isSuitable 
+                        ? validationResult.confidence === 'high' ? '✅' : '⚠️'
+                        : '⚠️'
+                      }
+                    </span>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{validationResult.message}</div>
+                      {validationResult.recommendations && validationResult.recommendations.length > 0 && (
+                        <div className="mt-2">
+                          <div className="text-xs font-medium mb-1">Recommendations:</div>
+                          <ul className="text-xs space-y-1">
+                            {validationResult.recommendations.map((rec, index) => (
+                              <li key={index} className="flex items-start gap-1">
+                                <span className="text-gray-400">•</span>
+                                <span>{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
                 </div>
               )}
             </div>
