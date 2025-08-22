@@ -109,181 +109,214 @@ export default function ContactPage() {
             </div>
 
             {/* State Helplines */}
-            <div className="bg-white rounded-xl shadow-lg p-6 md:col-span-2 lg:col-span-3">
-              <h2 className="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
-                🏛️ All State Agriculture Helplines
-              </h2>
+            <div className="bg-white rounded-xl shadow-lg p-8 md:col-span-2 lg:col-span-3">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-green-700 mb-2">
+                  🏛️ All State Agriculture Helplines
+                </h2>
+                <p className="text-gray-600">Find your state-specific agriculture helpline number</p>
+              </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Northern States</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Uttar Pradesh:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Punjab:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Haryana:</span>
-                    <span className="text-green-600 font-bold">1800-180-2117</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Rajasthan:</span>
-                    <span className="text-green-600 font-bold">1800-180-6127</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Himachal Pradesh:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Uttarakhand:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Jammu & Kashmir:</span>
-                    <span className="text-green-600 font-bold">1800-180-7035</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Delhi:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Western & Central States</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Maharashtra:</span>
-                    <span className="text-green-600 font-bold">1800-233-4555</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Gujarat:</span>
-                    <span className="text-green-600 font-bold">1800-200-0023</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Madhya Pradesh:</span>
-                    <span className="text-green-600 font-bold">1800-233-4144</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Chhattisgarh:</span>
-                    <span className="text-green-600 font-bold">1800-233-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Goa:</span>
-                    <span className="text-green-600 font-bold">1800-233-0022</span>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Northern States */}
+                <div className="bg-blue-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-blue-700 mb-4 text-center border-b-2 border-blue-200 pb-2">
+                    🏔️ Northern States
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Uttar Pradesh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Punjab</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Haryana</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-2117</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Rajasthan</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-6127</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Himachal Pradesh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Uttarakhand</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Jammu & Kashmir</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-7035</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Delhi</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Southern States</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Karnataka:</span>
-                    <span className="text-green-600 font-bold">1800-425-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Tamil Nadu:</span>
-                    <span className="text-green-600 font-bold">1800-425-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Andhra Pradesh:</span>
-                    <span className="text-green-600 font-bold">1800-425-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Telangana:</span>
-                    <span className="text-green-600 font-bold">1800-425-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Kerala:</span>
-                    <span className="text-green-600 font-bold">1800-425-1550</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Eastern States</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">West Bengal:</span>
-                    <span className="text-green-600 font-bold">1800-345-6770</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Bihar:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Jharkhand:</span>
-                    <span className="text-green-600 font-bold">1800-345-6770</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Odisha:</span>
-                    <span className="text-green-600 font-bold">1800-345-6551</span>
+                {/* Western & Central States */}
+                <div className="bg-orange-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-orange-700 mb-4 text-center border-b-2 border-orange-200 pb-2">
+                    🌾 Western & Central
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Maharashtra</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-233-4555</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Gujarat</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-200-0023</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Madhya Pradesh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-233-4144</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Chhattisgarh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-233-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Goa</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-233-0022</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Northeastern States</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Assam:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Arunachal Pradesh:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Manipur:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Meghalaya:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Mizoram:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Nagaland:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Tripura:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Sikkim:</span>
-                    <span className="text-green-600 font-bold">1800-345-3644</span>
+                {/* Southern States */}
+                <div className="bg-green-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-green-700 mb-4 text-center border-b-2 border-green-200 pb-2">
+                    🌴 Southern States
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Karnataka</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Tamil Nadu</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Andhra Pradesh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Telangana</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Kerala</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1550</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-gray-800 mb-3">Union Territories</h3>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Chandigarh:</span>
-                    <span className="text-green-600 font-bold">1800-180-1551</span>
+                {/* Eastern States */}
+                <div className="bg-purple-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-purple-700 mb-4 text-center border-b-2 border-purple-200 pb-2">
+                    🌊 Eastern States
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">West Bengal</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-6770</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Bihar</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Jharkhand</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-6770</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Odisha</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-6551</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Puducherry:</span>
-                    <span className="text-green-600 font-bold">1800-425-1551</span>
+                </div>
+                
+                {/* Northeastern States */}
+                <div className="bg-teal-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-teal-700 mb-4 text-center border-b-2 border-teal-200 pb-2">
+                    🌿 Northeast States
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Assam</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Arunachal Pradesh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Manipur</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Meghalaya</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Mizoram</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Nagaland</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Tripura</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Sikkim</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-3644</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Andaman & Nicobar:</span>
-                    <span className="text-green-600 font-bold">1800-345-4545</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Lakshadweep:</span>
-                    <span className="text-green-600 font-bold">1800-425-1550</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Ladakh:</span>
-                    <span className="text-green-600 font-bold">1800-180-7035</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Dadra & Nagar Haveli:</span>
-                    <span className="text-green-600 font-bold">1800-200-0023</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Daman & Diu:</span>
-                    <span className="text-green-600 font-bold">1800-200-0023</span>
+                </div>
+                
+                {/* Union Territories */}
+                <div className="bg-indigo-50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-indigo-700 mb-4 text-center border-b-2 border-indigo-200 pb-2">
+                    🏛️ Union Territories
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Chandigarh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Puducherry</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1551</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Andaman & Nicobar</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-345-4545</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Lakshadweep</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-425-1550</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Ladakh</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-180-7035</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Dadra & Nagar Haveli</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-200-0023</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg flex justify-between items-center">
+                      <span className="font-medium text-gray-700">Daman & Diu</span>
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">1800-200-0023</span>
+                    </div>
                   </div>
                 </div>
               </div>
