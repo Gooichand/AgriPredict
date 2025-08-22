@@ -87,81 +87,235 @@ export default function CropSetupPage() {
   )
 
   const worldLocations = [
-    // All Indian States and Union Territories
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana',
-    'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
-    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-    'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli', 'Daman and Diu', 'Delhi',
-    'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry',
+    // UTTAR PRADESH - Cities, Towns, Villages
+    'Agra, Uttar Pradesh', 'Aligarh, Uttar Pradesh', 'Allahabad, Uttar Pradesh', 'Bareilly, Uttar Pradesh', 'Firozabad, Uttar Pradesh',
+    'Ghaziabad, Uttar Pradesh', 'Kanpur, Uttar Pradesh', 'Lucknow, Uttar Pradesh', 'Meerut, Uttar Pradesh', 'Moradabad, Uttar Pradesh',
+    'Noida, Uttar Pradesh', 'Varanasi, Uttar Pradesh', 'Mathura, Uttar Pradesh', 'Gorakhpur, Uttar Pradesh', 'Saharanpur, Uttar Pradesh',
+    'Muzaffarnagar, Uttar Pradesh', 'Bulandshahr, Uttar Pradesh', 'Rampur, Uttar Pradesh', 'Shahjahanpur, Uttar Pradesh', 'Farrukhabad, Uttar Pradesh',
+    'Mau, Uttar Pradesh', 'Hapur, Uttar Pradesh', 'Etawah, Uttar Pradesh', 'Mirzapur, Uttar Pradesh', 'Budhana, Uttar Pradesh',
+    'Shamli, Uttar Pradesh', 'Hathras, Uttar Pradesh', 'Sambhal, Uttar Pradesh', 'Orai, Uttar Pradesh', 'Bahraich, Uttar Pradesh',
+    'Unnao, Uttar Pradesh', 'Rae Bareli, Uttar Pradesh', 'Lakhimpur Kheri, Uttar Pradesh', 'Sitapur, Uttar Pradesh', 'Hardoi, Uttar Pradesh',
+    'Misrikh, Uttar Pradesh', 'Laharpur, Uttar Pradesh', 'Bilram, Uttar Pradesh', 'Bachhrawan, Uttar Pradesh', 'Malihabad, Uttar Pradesh',
     
-    // Major Cities A-Z
-    'Agra, Uttar Pradesh', 'Ahmedabad, Gujarat', 'Ajmer, Rajasthan', 'Akola, Maharashtra', 'Aligarh, Uttar Pradesh',
-    'Allahabad, Uttar Pradesh', 'Amravati, Maharashtra', 'Amritsar, Punjab', 'Aurangabad, Maharashtra', 'Bareilly, Uttar Pradesh',
-    'Belgaum, Karnataka', 'Bhavnagar, Gujarat', 'Bhilai, Chhattisgarh', 'Bhopal, Madhya Pradesh', 'Bhubaneswar, Odisha',
-    'Bikaner, Rajasthan', 'Bilaspur, Chhattisgarh', 'Bokaro, Jharkhand', 'Chandigarh', 'Chennai, Tamil Nadu',
-    'Coimbatore, Tamil Nadu', 'Cuttack, Odisha', 'Dehradun, Uttarakhand', 'Dhanbad, Jharkhand', 'Durgapur, West Bengal',
-    'Erode, Tamil Nadu', 'Faridabad, Haryana', 'Firozabad, Uttar Pradesh', 'Ghaziabad, Uttar Pradesh', 'Guntur, Andhra Pradesh',
-    'Gurgaon, Haryana', 'Guwahati, Assam', 'Gwalior, Madhya Pradesh', 'Hubli, Karnataka', 'Hyderabad, Telangana',
-    'Indore, Madhya Pradesh', 'Jabalpur, Madhya Pradesh', 'Jaipur, Rajasthan', 'Jalandhar, Punjab', 'Jammu, Jammu and Kashmir',
-    'Jamnagar, Gujarat', 'Jamshedpur, Jharkhand', 'Jodhpur, Rajasthan', 'Kanpur, Uttar Pradesh', 'Kochi, Kerala',
-    'Kolhapur, Maharashtra', 'Kolkata, West Bengal', 'Kota, Rajasthan', 'Kozhikode, Kerala', 'Kurnool, Andhra Pradesh',
-    'Lucknow, Uttar Pradesh', 'Ludhiana, Punjab', 'Madurai, Tamil Nadu', 'Mangalore, Karnataka', 'Meerut, Uttar Pradesh',
-    'Moradabad, Uttar Pradesh', 'Mumbai, Maharashtra', 'Mysore, Karnataka', 'Nagpur, Maharashtra', 'Nanded, Maharashtra',
-    'Nashik, Maharashtra', 'Nellore, Andhra Pradesh', 'New Delhi, Delhi', 'Noida, Uttar Pradesh', 'Patna, Bihar',
-    'Pondicherry, Puducherry', 'Pune, Maharashtra', 'Raipur, Chhattisgarh', 'Rajkot, Gujarat', 'Ranchi, Jharkhand',
-    'Rourkela, Odisha', 'Salem, Tamil Nadu', 'Sangli, Maharashtra', 'Shimla, Himachal Pradesh', 'Siliguri, West Bengal',
-    'Solapur, Maharashtra', 'Srinagar, Jammu and Kashmir', 'Surat, Gujarat', 'Thiruvananthapuram, Kerala', 'Thrissur, Kerala',
-    'Tiruchirappalli, Tamil Nadu', 'Tirunelveli, Tamil Nadu', 'Tiruppur, Tamil Nadu', 'Udaipur, Rajasthan', 'Ujjain, Madhya Pradesh',
-    'Vadodara, Gujarat', 'Varanasi, Uttar Pradesh', 'Vijayawada, Andhra Pradesh', 'Visakhapatnam, Andhra Pradesh', 'Warangal, Telangana',
+    // MAHARASHTRA - Cities, Towns, Villages
+    'Mumbai, Maharashtra', 'Pune, Maharashtra', 'Nagpur, Maharashtra', 'Nashik, Maharashtra', 'Aurangabad, Maharashtra',
+    'Solapur, Maharashtra', 'Amravati, Maharashtra', 'Kolhapur, Maharashtra', 'Sangli, Maharashtra', 'Akola, Maharashtra',
+    'Nanded, Maharashtra', 'Latur, Maharashtra', 'Dhule, Maharashtra', 'Ahmednagar, Maharashtra', 'Chandrapur, Maharashtra',
+    'Parbhani, Maharashtra', 'Jalgaon, Maharashtra', 'Bhiwandi, Maharashtra', 'Navi Mumbai, Maharashtra', 'Kalyan, Maharashtra',
+    'Vasai, Maharashtra', 'Thane, Maharashtra', 'Panvel, Maharashtra', 'Mira Road, Maharashtra', 'Dombivli, Maharashtra',
+    'Ulhasnagar, Maharashtra', 'Malegaon, Maharashtra', 'Jalna, Maharashtra', 'Beed, Maharashtra', 'Yavatmal, Maharashtra',
+    'Buldhana, Maharashtra', 'Washim, Maharashtra', 'Hingoli, Maharashtra', 'Wardha, Maharashtra', 'Gadchiroli, Maharashtra',
+    'Gondia, Maharashtra', 'Bhandara, Maharashtra', 'Ratnagiri, Maharashtra', 'Sindhudurg, Maharashtra', 'Satara, Maharashtra',
+    'Raigad, Maharashtra', 'Osmanabad, Maharashtra', 'Baramati, Maharashtra', 'Shirdi, Maharashtra', 'Lonavala, Maharashtra',
+    'Khandala, Maharashtra', 'Mahabaleshwar, Maharashtra', 'Alibag, Maharashtra', 'Murud, Maharashtra', 'Harihareshwar, Maharashtra',
     
-    // Delhi Areas and Colonies
-    'Connaught Place, Delhi', 'Karol Bagh, Delhi', 'Lajpat Nagar, Delhi', 'Rajouri Garden, Delhi', 'Saket, Delhi',
-    'Vasant Kunj, Delhi', 'Dwarka, Delhi', 'Rohini, Delhi', 'Pitampura, Delhi', 'Janakpuri, Delhi',
-    'Laxmi Nagar, Delhi', 'Preet Vihar, Delhi', 'Mayur Vihar, Delhi', 'Kalkaji, Delhi', 'Greater Kailash, Delhi',
-    'Defence Colony, Delhi', 'Khan Market, Delhi', 'India Gate, Delhi', 'Red Fort, Delhi', 'Chandni Chowk, Delhi',
+    // GUJARAT - Cities, Towns, Villages
+    'Ahmedabad, Gujarat', 'Surat, Gujarat', 'Vadodara, Gujarat', 'Rajkot, Gujarat', 'Bhavnagar, Gujarat',
+    'Jamnagar, Gujarat', 'Junagadh, Gujarat', 'Gandhinagar, Gujarat', 'Anand, Gujarat', 'Bharuch, Gujarat',
+    'Mehsana, Gujarat', 'Morbi, Gujarat', 'Nadiad, Gujarat', 'Surendranagar, Gujarat', 'Gandhidham, Gujarat',
+    'Veraval, Gujarat', 'Navsari, Gujarat', 'Valsad, Gujarat', 'Palanpur, Gujarat', 'Vapi, Gujarat',
+    'Godhra, Gujarat', 'Patan, Gujarat', 'Porbandar, Gujarat', 'Botad, Gujarat', 'Amreli, Gujarat',
+    'Deesa, Gujarat', 'Jetpur, Gujarat', 'Kalol, Gujarat', 'Dahod, Gujarat', 'Himmatnagar, Gujarat',
+    'Keshod, Gujarat', 'Wadhwan, Gujarat', 'Anjar, Gujarat', 'Mandvi, Gujarat', 'Dwarka, Gujarat',
+    'Somnath, Gujarat', 'Diu, Gujarat', 'Daman, Gujarat', 'Silvassa, Gujarat', 'Umbergaon, Gujarat',
     
-    // Mumbai Areas and Colonies
-    'Andheri East, Mumbai', 'Andheri West, Mumbai', 'Bandra East, Mumbai', 'Bandra West, Mumbai', 'Borivali East, Mumbai',
-    'Borivali West, Mumbai', 'Dadar East, Mumbai', 'Dadar West, Mumbai', 'Goregaon East, Mumbai', 'Goregaon West, Mumbai',
-    'Juhu, Mumbai', 'Kandivali East, Mumbai', 'Kandivali West, Mumbai', 'Khar East, Mumbai', 'Khar West, Mumbai',
-    'Malad East, Mumbai', 'Malad West, Mumbai', 'Powai, Mumbai', 'Santa Cruz East, Mumbai', 'Santa Cruz West, Mumbai',
-    'Thane West, Mumbai', 'Vile Parle East, Mumbai', 'Vile Parle West, Mumbai', 'Worli, Mumbai', 'Lower Parel, Mumbai',
+    // PUNJAB - Cities, Towns, Villages
+    'Ludhiana, Punjab', 'Amritsar, Punjab', 'Jalandhar, Punjab', 'Patiala, Punjab', 'Bathinda, Punjab',
+    'Mohali, Punjab', 'Firozpur, Punjab', 'Batala, Punjab', 'Pathankot, Punjab', 'Moga, Punjab',
+    'Abohar, Punjab', 'Malerkotla, Punjab', 'Khanna, Punjab', 'Phagwara, Punjab', 'Muktsar, Punjab',
+    'Barnala, Punjab', 'Rajpura, Punjab', 'Hoshiarpur, Punjab', 'Kapurthala, Punjab', 'Faridkot, Punjab',
+    'Sunam, Punjab', 'Sangrur, Punjab', 'Fazilka, Punjab', 'Gurdaspur, Punjab', 'Kharar, Punjab',
+    'Gobindgarh, Punjab', 'Mansa, Punjab', 'Malout, Punjab', 'Nabha, Punjab', 'Tarn Taran, Punjab',
+    'Jagraon, Punjab', 'Rampura Phul, Punjab', 'Zira, Punjab', 'Kotkapura, Punjab', 'Raikot, Punjab',
+    'Samana, Punjab', 'Dhuri, Punjab', 'Longowal, Punjab', 'Dirba, Punjab', 'Budhlada, Punjab',
     
-    // Bangalore Areas and Colonies
-    'Koramangala, Bangalore', 'Indiranagar, Bangalore', 'Jayanagar, Bangalore', 'Malleshwaram, Bangalore', 'Rajajinagar, Bangalore',
-    'Basavanagudi, Bangalore', 'BTM Layout, Bangalore', 'HSR Layout, Bangalore', 'Electronic City, Bangalore', 'Whitefield, Bangalore',
-    'Marathahalli, Bangalore', 'Sarjapur Road, Bangalore', 'Bannerghatta Road, Bangalore', 'Hebbal, Bangalore', 'Yelahanka, Bangalore',
+    // HARYANA - Cities, Towns, Villages
+    'Gurgaon, Haryana', 'Faridabad, Haryana', 'Panipat, Haryana', 'Ambala, Haryana', 'Yamunanagar, Haryana',
+    'Rohtak, Haryana', 'Hisar, Haryana', 'Karnal, Haryana', 'Sonipat, Haryana', 'Panchkula, Haryana',
+    'Bhiwani, Haryana', 'Sirsa, Haryana', 'Jind, Haryana', 'Thanesar, Haryana', 'Kaithal, Haryana',
+    'Rewari, Haryana', 'Narnaul, Haryana', 'Pundri, Haryana', 'Kosli, Haryana', 'Palwal, Haryana',
+    'Hansi, Haryana', 'Fatehabad, Haryana', 'Gohana, Haryana', 'Tohana, Haryana', 'Narwana, Haryana',
+    'Mandi Dabwali, Haryana', 'Charkhi Dadri, Haryana', 'Shahabad, Haryana', 'Pehowa, Haryana', 'Samalkha, Haryana',
+    'Pinjore, Haryana', 'Ladwa, Haryana', 'Sohna, Haryana', 'Safidon, Haryana', 'Taraori, Haryana',
+    'Mahendragarh, Haryana', 'Ratia, Haryana', 'Rania, Haryana', 'Siwani, Haryana', 'Bawal, Haryana',
     
-    // Chennai Areas and Colonies
-    'T Nagar, Chennai', 'Anna Nagar, Chennai', 'Adyar, Chennai', 'Velachery, Chennai', 'Tambaram, Chennai',
-    'Chrompet, Chennai', 'Porur, Chennai', 'OMR, Chennai', 'ECR, Chennai', 'Mylapore, Chennai',
+    // RAJASTHAN - Cities, Towns, Villages
+    'Jaipur, Rajasthan', 'Jodhpur, Rajasthan', 'Kota, Rajasthan', 'Bikaner, Rajasthan', 'Ajmer, Rajasthan',
+    'Udaipur, Rajasthan', 'Bhilwara, Rajasthan', 'Alwar, Rajasthan', 'Bharatpur, Rajasthan', 'Sikar, Rajasthan',
+    'Pali, Rajasthan', 'Sri Ganganagar, Rajasthan', 'Kishangarh, Rajasthan', 'Baran, Rajasthan', 'Dhaulpur, Rajasthan',
+    'Tonk, Rajasthan', 'Beawar, Rajasthan', 'Hanumangarh, Rajasthan', 'Churu, Rajasthan', 'Nagaur, Rajasthan',
+    'Jhunjhunu, Rajasthan', 'Dausa, Rajasthan', 'Sawai Madhopur, Rajasthan', 'Karauli, Rajasthan', 'Jhalawar, Rajasthan',
+    'Bundi, Rajasthan', 'Chittorgarh, Rajasthan', 'Rajsamand, Rajasthan', 'Dungarpur, Rajasthan', 'Banswara, Rajasthan',
+    'Mount Abu, Rajasthan', 'Pushkar, Rajasthan', 'Mandawa, Rajasthan', 'Shekhawati, Rajasthan', 'Fatehpur, Rajasthan',
+    'Lachhmangarh, Rajasthan', 'Nawalgarh, Rajasthan', 'Mukundgarh, Rajasthan', 'Bissau, Rajasthan', 'Ratangarh, Rajasthan',
     
-    // Pune Areas and Colonies
-    'Koregaon Park, Pune', 'Baner, Pune', 'Hinjewadi, Pune', 'Wakad, Pune', 'Aundh, Pune',
-    'Kothrud, Pune', 'Deccan, Pune', 'Camp, Pune', 'Viman Nagar, Pune', 'Hadapsar, Pune',
+    // TAMIL NADU - Cities, Towns, Villages
+    'Chennai, Tamil Nadu', 'Coimbatore, Tamil Nadu', 'Madurai, Tamil Nadu', 'Tiruchirappalli, Tamil Nadu', 'Salem, Tamil Nadu',
+    'Tirunelveli, Tamil Nadu', 'Tiruppur, Tamil Nadu', 'Vellore, Tamil Nadu', 'Erode, Tamil Nadu', 'Thoothukudi, Tamil Nadu',
+    'Dindigul, Tamil Nadu', 'Thanjavur, Tamil Nadu', 'Ranipet, Tamil Nadu', 'Sivakasi, Tamil Nadu', 'Karur, Tamil Nadu',
+    'Udhagamandalam, Tamil Nadu', 'Hosur, Tamil Nadu', 'Nagercoil, Tamil Nadu', 'Kanchipuram, Tamil Nadu', 'Kumarakonam, Tamil Nadu',
+    'Pollachi, Tamil Nadu', 'Rajapalayam, Tamil Nadu', 'Pudukkottai, Tamil Nadu', 'Neyveli, Tamil Nadu', 'Nagapattinam, Tamil Nadu',
+    'Viluppuram, Tamil Nadu', 'Tiruvallur, Tamil Nadu', 'Tiruvannamalai, Tamil Nadu', 'Gudiyatham, Tamil Nadu', 'Kumbakonam, Tamil Nadu',
+    'Mayiladuthurai, Tamil Nadu', 'Chidambaram, Tamil Nadu', 'Cuddalore, Tamil Nadu', 'Krishnagiri, Tamil Nadu', 'Dharmapuri, Tamil Nadu',
+    'Namakkal, Tamil Nadu', 'Rasipuram, Tamil Nadu', 'Attur, Tamil Nadu', 'Yercaud, Tamil Nadu', 'Kodaikanal, Tamil Nadu',
     
-    // Hyderabad Areas and Colonies
-    'Banjara Hills, Hyderabad', 'Jubilee Hills, Hyderabad', 'Gachibowli, Hyderabad', 'Hitech City, Hyderabad', 'Kondapur, Hyderabad',
-    'Madhapur, Hyderabad', 'Secunderabad, Hyderabad', 'Begumpet, Hyderabad', 'Ameerpet, Hyderabad', 'Kukatpally, Hyderabad',
+    // KARNATAKA - Cities, Towns, Villages
+    'Bangalore, Karnataka', 'Mysore, Karnataka', 'Hubli, Karnataka', 'Mangalore, Karnataka', 'Belgaum, Karnataka',
+    'Gulbarga, Karnataka', 'Davanagere, Karnataka', 'Bellary, Karnataka', 'Bijapur, Karnataka', 'Shimoga, Karnataka',
+    'Tumkur, Karnataka', 'Raichur, Karnataka', 'Bidar, Karnataka', 'Hospet, Karnataka', 'Gadag, Karnataka',
+    'Udupi, Karnataka', 'Kolar, Karnataka', 'Mandya, Karnataka', 'Chikmagalur, Karnataka', 'Hassan, Karnataka',
+    'Chitradurga, Karnataka', 'Davangere, Karnataka', 'Koppal, Karnataka', 'Bagalkot, Karnataka', 'Haveri, Karnataka',
+    'Dharwad, Karnataka', 'Uttara Kannada, Karnataka', 'Dakshina Kannada, Karnataka', 'Kodagu, Karnataka', 'Chamarajanagar, Karnataka',
+    'Mysuru, Karnataka', 'Ramanagara, Karnataka', 'Chikkaballapur, Karnataka', 'Yadgir, Karnataka', 'Vijayapura, Karnataka',
+    'Ballari, Karnataka', 'Kalaburagi, Karnataka', 'Belagavi, Karnataka', 'Shivamogga, Karnataka', 'Tumakuru, Karnataka',
     
-    // Kolkata Areas and Colonies
-    'Salt Lake, Kolkata', 'Park Street, Kolkata', 'Ballygunge, Kolkata', 'Alipore, Kolkata', 'Howrah, Kolkata',
-    'Rajarhat, Kolkata', 'New Town, Kolkata', 'Sector V, Kolkata', 'Esplanade, Kolkata', 'Gariahat, Kolkata',
+    // KERALA - Cities, Towns, Villages
+    'Thiruvananthapuram, Kerala', 'Kochi, Kerala', 'Kozhikode, Kerala', 'Thrissur, Kerala', 'Kollam, Kerala',
+    'Palakkad, Kerala', 'Alappuzha, Kerala', 'Malappuram, Kerala', 'Kannur, Kerala', 'Kasaragod, Kerala',
+    'Pathanamthitta, Kerala', 'Idukki, Kerala', 'Ernakulam, Kerala', 'Wayanad, Kerala', 'Munnar, Kerala',
+    'Thekkady, Kerala', 'Kumarakom, Kerala', 'Varkala, Kerala', 'Kovalam, Kerala', 'Bekal, Kerala',
+    'Guruvayur, Kerala', 'Sabarimala, Kerala', 'Periyar, Kerala', 'Athirappilly, Kerala', 'Vagamon, Kerala',
+    'Ponmudi, Kerala', 'Nelliampathy, Kerala', 'Poovar, Kerala', 'Marari, Kerala', 'Cherai, Kerala',
+    'Fort Kochi, Kerala', 'Mattancherry, Kerala', 'Vypeen, Kerala', 'Kumily, Kerala', 'Devikulam, Kerala',
+    'Marayoor, Kerala', 'Chinnar, Kerala', 'Eravikulam, Kerala', 'Anamudi, Kerala', 'Meesapulimala, Kerala',
     
-    // Ahmedabad Areas and Colonies
-    'Satellite, Ahmedabad', 'Vastrapur, Ahmedabad', 'Bopal, Ahmedabad', 'Prahlad Nagar, Ahmedabad', 'Navrangpura, Ahmedabad',
-    'CG Road, Ahmedabad', 'SG Highway, Ahmedabad', 'Maninagar, Ahmedabad', 'Ghatlodia, Ahmedabad', 'Thaltej, Ahmedabad',
+    // ANDHRA PRADESH - Cities, Towns, Villages
+    'Visakhapatnam, Andhra Pradesh', 'Vijayawada, Andhra Pradesh', 'Guntur, Andhra Pradesh', 'Nellore, Andhra Pradesh', 'Kurnool, Andhra Pradesh',
+    'Rajahmundry, Andhra Pradesh', 'Tirupati, Andhra Pradesh', 'Kakinada, Andhra Pradesh', 'Anantapur, Andhra Pradesh', 'Vizianagaram, Andhra Pradesh',
+    'Eluru, Andhra Pradesh', 'Ongole, Andhra Pradesh', 'Nandyal, Andhra Pradesh', 'Machilipatnam, Andhra Pradesh', 'Adoni, Andhra Pradesh',
+    'Tenali, Andhra Pradesh', 'Proddatur, Andhra Pradesh', 'Chittoor, Andhra Pradesh', 'Hindupur, Andhra Pradesh', 'Bhimavaram, Andhra Pradesh',
+    'Madanapalle, Andhra Pradesh', 'Guntakal, Andhra Pradesh', 'Dharmavaram, Andhra Pradesh', 'Gudivada, Andhra Pradesh', 'Narasaraopet, Andhra Pradesh',
+    'Tadipatri, Andhra Pradesh', 'Mangalagiri, Andhra Pradesh', 'Chilakaluripet, Andhra Pradesh', 'Yemmiganur, Andhra Pradesh', 'Kadapa, Andhra Pradesh',
+    'Srikakulam, Andhra Pradesh', 'Amalapuram, Andhra Pradesh', 'Palakollu, Andhra Pradesh', 'Narasapuram, Andhra Pradesh', 'Tanuku, Andhra Pradesh',
+    'Rayachoti, Andhra Pradesh', 'Srikalahasti, Andhra Pradesh', 'Bapatla, Andhra Pradesh', 'Repalle, Andhra Pradesh', 'Kavali, Andhra Pradesh',
     
-    // Jaipur Areas and Colonies
-    'C Scheme, Jaipur', 'Malviya Nagar, Jaipur', 'Vaishali Nagar, Jaipur', 'Mansarovar, Jaipur', 'Tonk Road, Jaipur',
-    'Ajmer Road, Jaipur', 'JLN Marg, Jaipur', 'MI Road, Jaipur', 'Bani Park, Jaipur', 'Civil Lines, Jaipur',
+    // TELANGANA - Cities, Towns, Villages
+    'Hyderabad, Telangana', 'Warangal, Telangana', 'Nizamabad, Telangana', 'Khammam, Telangana', 'Karimnagar, Telangana',
+    'Ramagundam, Telangana', 'Mahbubnagar, Telangana', 'Nalgonda, Telangana', 'Adilabad, Telangana', 'Suryapet, Telangana',
+    'Miryalaguda, Telangana', 'Jagtial, Telangana', 'Mancherial, Telangana', 'Nirmal, Telangana', 'Kothagudem, Telangana',
+    'Palwancha, Telangana', 'Bodhan, Telangana', 'Sangareddy, Telangana', 'Metpally, Telangana', 'Zahirabad, Telangana',
+    'Medak, Telangana', 'Siddipet, Telangana', 'Jangaon, Telangana', 'Bhongir, Telangana', 'Kamareddy, Telangana',
+    'Wanaparthy, Telangana', 'Gadwal, Telangana', 'Nagarkurnool, Telangana', 'Vikarabad, Telangana', 'Banswada, Telangana',
+    'Kalwakurthy, Telangana', 'Narayanpet, Telangana', 'Jogulamba, Telangana', 'Manthani, Telangana', 'Peddapalli, Telangana',
+    'Bellampalli, Telangana', 'Mandamarri, Telangana', 'Luxettipet, Telangana', 'Asifabad, Telangana', 'Komaram Bheem, Telangana',
     
-    // Other Major Areas
-    'Sector 14, Gurgaon', 'Sector 15, Gurgaon', 'Sector 29, Gurgaon', 'DLF Phase 1, Gurgaon', 'DLF Phase 2, Gurgaon',
-    'Model Town, Ludhiana', 'Civil Lines, Ludhiana', 'Sarabha Nagar, Ludhiana', 'Dugri, Ludhiana', 'BRS Nagar, Ludhiana',
-    'Gomti Nagar, Lucknow', 'Hazratganj, Lucknow', 'Aliganj, Lucknow', 'Indira Nagar, Lucknow', 'Mahanagar, Lucknow',
-    'Boring Road, Patna', 'Fraser Road, Patna', 'Kankarbagh, Patna', 'Rajendra Nagar, Patna', 'Buddha Colony, Patna'
+    // WEST BENGAL - Cities, Towns, Villages
+    'Kolkata, West Bengal', 'Howrah, West Bengal', 'Durgapur, West Bengal', 'Asansol, West Bengal', 'Siliguri, West Bengal',
+    'Malda, West Bengal', 'Bardhaman, West Bengal', 'Baharampur, West Bengal', 'Habra, West Bengal', 'Kharagpur, West Bengal',
+    'Shantipur, West Bengal', 'Dankuni, West Bengal', 'Dhulian, West Bengal', 'Ranaghat, West Bengal', 'Haldia, West Bengal',
+    'Raiganj, West Bengal', 'Krishnanagar, West Bengal', 'Nabadwip, West Bengal', 'Medinipur, West Bengal', 'Jalpaiguri, West Bengal',
+    'Balurghat, West Bengal', 'Basirhat, West Bengal', 'Bankura, West Bengal', 'Chakdaha, West Bengal', 'Darjeeling, West Bengal',
+    'Alipurduar, West Bengal', 'Purulia, West Bengal', 'Jangipur, West Bengal', 'Bolpur, West Bengal', 'Bangaon, West Bengal',
+    'Cooch Behar, West Bengal', 'Tamluk, West Bengal', 'Midnapore, West Bengal', 'Contai, West Bengal', 'Egra, West Bengal',
+    'Murshidabad, West Bengal', 'Jiaganj, West Bengal', 'Domkal, West Bengal', 'Lalgola, West Bengal', 'Mayurbhanj, West Bengal',
+    
+    // BIHAR - Cities, Towns, Villages
+    'Patna, Bihar', 'Gaya, Bihar', 'Bhagalpur, Bihar', 'Muzaffarpur, Bihar', 'Darbhanga, Bihar',
+    'Bihar Sharif, Bihar', 'Arrah, Bihar', 'Begusarai, Bihar', 'Katihar, Bihar', 'Munger, Bihar',
+    'Chhapra, Bihar', 'Danapur, Bihar', 'Saharsa, Bihar', 'Hajipur, Bihar', 'Sasaram, Bihar',
+    'Dehri, Bihar', 'Siwan, Bihar', 'Motihari, Bihar', 'Nawada, Bihar', 'Bagaha, Bihar',
+    'Buxar, Bihar', 'Kishanganj, Bihar', 'Sitamarhi, Bihar', 'Jamalpur, Bihar', 'Jehanabad, Bihar',
+    'Aurangabad, Bihar', 'Lakhisarai, Bihar', 'Sheikhpura, Bihar', 'Nalanda, Bihar', 'Jamui, Bihar',
+    'Khagaria, Bihar', 'Supaul, Bihar', 'Madhepura, Bihar', 'Araria, Bihar', 'Forbesganj, Bihar',
+    'Madhubani, Bihar', 'Benipatti, Bihar', 'Jhanjharpur, Bihar', 'Rajnagar, Bihar', 'Sakri, Bihar',
+    
+    // ODISHA - Cities, Towns, Villages
+    'Bhubaneswar, Odisha', 'Cuttack, Odisha', 'Rourkela, Odisha', 'Berhampur, Odisha', 'Sambalpur, Odisha',
+    'Puri, Odisha', 'Balasore, Odisha', 'Bhadrak, Odisha', 'Baripada, Odisha', 'Jharsuguda, Odisha',
+    'Jeypore, Odisha', 'Barbil, Odisha', 'Khordha, Odisha', 'Sundargarh, Odisha', 'Rayagada, Odisha',
+    'Balangir, Odisha', 'Nabarangpur, Odisha', 'Koraput, Odisha', 'Kendujhar, Odisha', 'Jagatsinghpur, Odisha',
+    'Kendrapara, Odisha', 'Jajpur, Odisha', 'Dhenkanal, Odisha', 'Angul, Odisha', 'Nayagarh, Odisha',
+    'Khurda, Odisha', 'Ganjam, Odisha', 'Gajapati, Odisha', 'Kandhamal, Odisha', 'Baudh, Odisha',
+    'Sonepur, Odisha', 'Nuapada, Odisha', 'Kalahandi, Odisha', 'Malkangiri, Odisha', 'Konark, Odisha',
+    'Chilika, Odisha', 'Gopalpur, Odisha', 'Chandipur, Odisha', 'Simlipal, Odisha', 'Bhitarkanika, Odisha',
+    
+    // JHARKHAND - Cities, Towns, Villages
+    'Ranchi, Jharkhand', 'Jamshedpur, Jharkhand', 'Dhanbad, Jharkhand', 'Bokaro, Jharkhand', 'Deoghar, Jharkhand',
+    'Phusro, Jharkhand', 'Hazaribagh, Jharkhand', 'Giridih, Jharkhand', 'Ramgarh, Jharkhand', 'Medininagar, Jharkhand',
+    'Chirkunda, Jharkhand', 'Chaibasa, Jharkhand', 'Gumla, Jharkhand', 'Dumka, Jharkhand', 'Godda, Jharkhand',
+    'Sahebganj, Jharkhand', 'Pakur, Jharkhand', 'Latehar, Jharkhand', 'Palamu, Jharkhand', 'Garwa, Jharkhand',
+    'Chatra, Jharkhand', 'Koderma, Jharkhand', 'Jamtara, Jharkhand', 'Simdega, Jharkhand', 'Khunti, Jharkhand',
+    'Saraikela, Jharkhand', 'East Singhbhum, Jharkhand', 'West Singhbhum, Jharkhand', 'Lohardaga, Jharkhand', 'Garhwa, Jharkhand',
+    'Daltonganj, Jharkhand', 'Bishrampur, Jharkhand', 'Chainpur, Jharkhand', 'Hussainabad, Jharkhand', 'Japla, Jharkhand',
+    'Lesliganj, Jharkhand', 'Mahuadanr, Jharkhand', 'Manatu, Jharkhand', 'Medininagar, Jharkhand', 'Patan, Jharkhand',
+    
+    // CHHATTISGARH - Cities, Towns, Villages
+    'Raipur, Chhattisgarh', 'Bhilai, Chhattisgarh', 'Bilaspur, Chhattisgarh', 'Korba, Chhattisgarh', 'Durg, Chhattisgarh',
+    'Rajnandgaon, Chhattisgarh', 'Jagdalpur, Chhattisgarh', 'Raigarh, Chhattisgarh', 'Ambikapur, Chhattisgarh', 'Mahasamund, Chhattisgarh',
+    'Dhamtari, Chhattisgarh', 'Kanker, Chhattisgarh', 'Bastar, Chhattisgarh', 'Kondagaon, Chhattisgarh', 'Narayanpur, Chhattisgarh',
+    'Bijapur, Chhattisgarh', 'Sukma, Chhattisgarh', 'Dantewada, Chhattisgarh', 'Gariaband, Chhattisgarh', 'Balod, Chhattisgarh',
+    'Baloda Bazar, Chhattisgarh', 'Bemetara, Chhattisgarh', 'Kabirdham, Chhattisgarh', 'Mungeli, Chhattisgarh', 'Surajpur, Chhattisgarh',
+    'Balrampur, Chhattisgarh', 'Jashpur, Chhattisgarh', 'Korea, Chhattisgarh', 'Surguja, Chhattisgarh', 'Janjgir, Chhattisgarh',
+    'Champa, Chhattisgarh', 'Sakti, Chhattisgarh', 'Pendra, Chhattisgarh', 'Lormi, Chhattisgarh', 'Malkharoda, Chhattisgarh',
+    'Akaltara, Chhattisgarh', 'Janjgir, Chhattisgarh', 'Naila, Chhattisgarh', 'Pamgarh, Chhattisgarh', 'Sarangarh, Chhattisgarh',
+    
+    // MADHYA PRADESH - Cities, Towns, Villages
+    'Bhopal, Madhya Pradesh', 'Indore, Madhya Pradesh', 'Gwalior, Madhya Pradesh', 'Jabalpur, Madhya Pradesh', 'Ujjain, Madhya Pradesh',
+    'Sagar, Madhya Pradesh', 'Dewas, Madhya Pradesh', 'Satna, Madhya Pradesh', 'Ratlam, Madhya Pradesh', 'Rewa, Madhya Pradesh',
+    'Murwara, Madhya Pradesh', 'Singrauli, Madhya Pradesh', 'Burhanpur, Madhya Pradesh', 'Khandwa, Madhya Pradesh', 'Morena, Madhya Pradesh',
+    'Bhind, Madhya Pradesh', 'Guna, Madhya Pradesh', 'Shivpuri, Madhya Pradesh', 'Vidisha, Madhya Pradesh', 'Chhatarpur, Madhya Pradesh',
+    'Damoh, Madhya Pradesh', 'Mandsaur, Madhya Pradesh', 'Khargone, Madhya Pradesh', 'Neemuch, Madhya Pradesh', 'Pithampur, Madhya Pradesh',
+    'Narmadapuram, Madhya Pradesh', 'Itarsi, Madhya Pradesh', 'Sehore, Madhya Pradesh', 'Mhow, Madhya Pradesh', 'Seoni, Madhya Pradesh',
+    'Balaghat, Madhya Pradesh', 'Chhindwara, Madhya Pradesh', 'Mandla, Madhya Pradesh', 'Dindori, Madhya Pradesh', 'Narsinghpur, Madhya Pradesh',
+    'Tendukheda, Madhya Pradesh', 'Gadarwara, Madhya Pradesh', 'Waraseoni, Madhya Pradesh', 'Barghat, Madhya Pradesh', 'Ghansour, Madhya Pradesh',
+    
+    // ASSAM - Cities, Towns, Villages
+    'Guwahati, Assam', 'Silchar, Assam', 'Dibrugarh, Assam', 'Jorhat, Assam', 'Nagaon, Assam',
+    'Tinsukia, Assam', 'Tezpur, Assam', 'Bongaigaon, Assam', 'Dhubri, Assam', 'North Lakhimpur, Assam',
+    'Karimganj, Assam', 'Sivasagar, Assam', 'Goalpara, Assam', 'Barpeta, Assam', 'Mangaldoi, Assam',
+    'Nalbari, Assam', 'Rangia, Assam', 'Diphu, Assam', 'North Guwahati, Assam', 'Marigaon, Assam',
+    'Digboi, Assam', 'Duliajan, Assam', 'Margherita, Assam', 'Naharkatiya, Assam', 'Doom Dooma, Assam',
+    'Sadiya, Assam', 'Pasighat, Assam', 'Tezu, Assam', 'Roing, Assam', 'Bomdila, Assam',
+    'Tawang, Assam', 'Ziro, Assam', 'Itanagar, Assam', 'Naharlagun, Assam', 'Seppa, Assam',
+    'Khonsa, Assam', 'Changlang, Assam', 'Miao, Assam', 'Namsai, Assam', 'Mahadevpur, Assam',
+    
+    // HIMACHAL PRADESH - Cities, Towns, Villages
+    'Shimla, Himachal Pradesh', 'Dharamshala, Himachal Pradesh', 'Solan, Himachal Pradesh', 'Mandi, Himachal Pradesh', 'Palampur, Himachal Pradesh',
+    'Baddi, Himachal Pradesh', 'Nahan, Himachal Pradesh', 'Paonta Sahib, Himachal Pradesh', 'Sundernagar, Himachal Pradesh', 'Chamba, Himachal Pradesh',
+    'Una, Himachal Pradesh', 'Kullu, Himachal Pradesh', 'Manali, Himachal Pradesh', 'Kasauli, Himachal Pradesh', 'Dalhousie, Himachal Pradesh',
+    'Khajjiar, Himachal Pradesh', 'McLeod Ganj, Himachal Pradesh', 'Bir, Himachal Pradesh', 'Baijnath, Himachal Pradesh', 'Jogindernagar, Himachal Pradesh',
+    'Hamirpur, Himachal Pradesh', 'Bilaspur, Himachal Pradesh', 'Kangra, Himachal Pradesh', 'Nurpur, Himachal Pradesh', 'Jawalamukhi, Himachal Pradesh',
+    'Dehra, Himachal Pradesh', 'Jaswan, Himachal Pradesh', 'Fatehpur, Himachal Pradesh', 'Indora, Himachal Pradesh', 'Sulah, Himachal Pradesh',
+    'Amb, Himachal Pradesh', 'Gagret, Himachal Pradesh', 'Haroli, Himachal Pradesh', 'Mukerian, Himachal Pradesh', 'Talwara, Himachal Pradesh',
+    'Daulatpur, Himachal Pradesh', 'Bangana, Himachal Pradesh', 'Bhota, Himachal Pradesh', 'Bharwain, Himachal Pradesh', 'Ghanari, Himachal Pradesh',
+    
+    // UTTARAKHAND - Cities, Towns, Villages
+    'Dehradun, Uttarakhand', 'Haridwar, Uttarakhand', 'Roorkee, Uttarakhand', 'Haldwani, Uttarakhand', 'Rudrapur, Uttarakhand',
+    'Kashipur, Uttarakhand', 'Rishikesh, Uttarakhand', 'Kotdwar, Uttarakhand', 'Ramnagar, Uttarakhand', 'Pithoragarh, Uttarakhand',
+    'Almora, Uttarakhand', 'Nainital, Uttarakhand', 'Mussoorie, Uttarakhand', 'Tehri, Uttarakhand', 'Pauri, Uttarakhand',
+    'Srinagar, Uttarakhand', 'Chamoli, Uttarakhand', 'Bageshwar, Uttarakhand', 'Champawat, Uttarakhand', 'Udham Singh Nagar, Uttarakhand',
+    'Kichha, Uttarakhand', 'Sitarganj, Uttarakhand', 'Jaspur, Uttarakhand', 'Bajpur, Uttarakhand', 'Gadarpur, Uttarakhand',
+    'Khatima, Uttarakhand', 'Tanakpur, Uttarakhand', 'Lalkuan, Uttarakhand', 'Bhimtal, Uttarakhand', 'Ranikhet, Uttarakhand',
+    'Kausani, Uttarakhand', 'Lansdowne, Uttarakhand', 'Chakrata, Uttarakhand', 'Dhanaulti, Uttarakhand', 'Auli, Uttarakhand',
+    'Joshimath, Uttarakhand', 'Badrinath, Uttarakhand', 'Kedarnath, Uttarakhand', 'Gangotri, Uttarakhand', 'Yamunotri, Uttarakhand',
+    
+    // GOA - Cities, Towns, Villages
+    'Panaji, Goa', 'Vasco da Gama, Goa', 'Margao, Goa', 'Mapusa, Goa', 'Ponda, Goa',
+    'Bicholim, Goa', 'Curchorem, Goa', 'Sanquelim, Goa', 'Cuncolim, Goa', 'Canacona, Goa',
+    'Quepem, Goa', 'Sanguem, Goa', 'Pernem, Goa', 'Bardez, Goa', 'Tiswadi, Goa',
+    'Salcete, Goa', 'Mormugao, Goa', 'Anjuna, Goa', 'Baga, Goa', 'Calangute, Goa',
+    'Candolim, Goa', 'Arambol, Goa', 'Morjim, Goa', 'Ashwem, Goa', 'Mandrem, Goa',
+    'Vagator, Goa', 'Chapora, Goa', 'Sinquerim, Goa', 'Aguada, Goa', 'Nerul, Goa',
+    'Reis Magos, Goa', 'Coco Beach, Goa', 'Dona Paula, Goa', 'Miramar, Goa', 'Caranzalem, Goa',
+    'Bambolim, Goa', 'Siridao, Goa', 'Bogmalo, Goa', 'Velsao, Goa', 'Arossim, Goa',
+    
+    // DELHI - Areas, Colonies, Villages
+    'New Delhi, Delhi', 'Old Delhi, Delhi', 'Central Delhi, Delhi', 'North Delhi, Delhi', 'South Delhi, Delhi',
+    'East Delhi, Delhi', 'West Delhi, Delhi', 'North East Delhi, Delhi', 'North West Delhi, Delhi', 'South East Delhi, Delhi',
+    'South West Delhi, Delhi', 'Connaught Place, Delhi', 'Karol Bagh, Delhi', 'Lajpat Nagar, Delhi', 'Rajouri Garden, Delhi',
+    'Saket, Delhi', 'Vasant Kunj, Delhi', 'Dwarka, Delhi', 'Rohini, Delhi', 'Pitampura, Delhi',
+    'Janakpuri, Delhi', 'Laxmi Nagar, Delhi', 'Preet Vihar, Delhi', 'Mayur Vihar, Delhi', 'Kalkaji, Delhi',
+    'Greater Kailash, Delhi', 'Defence Colony, Delhi', 'Khan Market, Delhi', 'India Gate, Delhi', 'Red Fort, Delhi',
+    'Chandni Chowk, Delhi', 'Paharganj, Delhi', 'Daryaganj, Delhi', 'Kashmere Gate, Delhi', 'Civil Lines, Delhi',
+    'Model Town, Delhi', 'Kamla Nagar, Delhi', 'Mukherjee Nagar, Delhi', 'Vijay Nagar, Delhi', 'Ashok Vihar, Delhi',
+    'Shalimar Bagh, Delhi', 'Punjabi Bagh, Delhi', 'Rajendra Place, Delhi', 'Patel Nagar, Delhi', 'Kirti Nagar, Delhi',
+    'Moti Nagar, Delhi', 'Naraina, Delhi', 'Uttam Nagar, Delhi', 'Najafgarh, Delhi', 'Dwarka Mor, Delhi',
+    'Palam, Delhi', 'Vasant Vihar, Delhi', 'RK Puram, Delhi', 'Munirka, Delhi', 'Hauz Khas, Delhi',
+    'Green Park, Delhi', 'AIIMS, Delhi', 'IIT Delhi, Delhi', 'Safdarjung, Delhi', 'Lodhi Road, Delhi',
+    'Nizamuddin, Delhi', 'Jangpura, Delhi', 'Lodi Colony, Delhi', 'Friends Colony, Delhi', 'Mathura Road, Delhi',
+    'Okhla, Delhi', 'Jamia Nagar, Delhi', 'Batla House, Delhi', 'Shaheen Bagh, Delhi', 'Kalindi Kunj, Delhi',
+    'Jasola, Delhi', 'Sarita Vihar, Delhi', 'Nehru Place, Delhi', 'Kalkaji Extension, Delhi', 'Govindpuri, Delhi',
+    'Tughlakabad, Delhi', 'Badarpur, Delhi', 'Faridabad Border, Delhi', 'Surajkund, Delhi', 'Aravalli Hills, Delhi'
   ]
 
   const filteredLocations = worldLocations.filter(locationName => 
