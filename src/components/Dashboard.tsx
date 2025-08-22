@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import YieldChart from './YieldChart'
 import AlertMap from './AlertMap'
-import AIAssistant from './AIAssistant'
+
 import AIRecommendations from './AIRecommendations'
 import CropHealthAnalysis from './CropHealthAnalysis'
 import Link from 'next/link'
@@ -196,13 +196,11 @@ export default function Dashboard() {
           <AIRecommendations farmData={farmData} />
         </div>
 
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="mt-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4">Alert Map</h3>
             <AlertMap />
           </div>
-          
-          <AIAssistant farmData={farmData} />
         </div>
 
         <div className="mt-6">
