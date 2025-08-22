@@ -524,7 +524,7 @@ export default function CropSetupPage() {
           <div className="flex gap-6">
             <a href="/crop-setup" className="hover:text-yellow-200 font-semibold">Home</a>
             <a href="/about" className="hover:text-yellow-200">About</a>
-            <a href="/contact" className="hover:text-yellow-200">Contact</a>
+            <a href="/contact" className="hover:text-yellow-200">Helplines</a>
             <a href="/news" className="hover:text-yellow-200">News</a>
           </div>
         </div>

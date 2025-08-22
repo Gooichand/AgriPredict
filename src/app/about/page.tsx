@@ -13,7 +13,7 @@ export default function AboutPage() {
           <div className="flex gap-6">
             <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
             <Link href="/about" className="hover:text-yellow-200 font-semibold">About</Link>
-            <Link href="/contact" className="hover:text-yellow-200">Contact</Link>
+            <Link href="/contact" className="hover:text-yellow-200">Helplines</Link>
             <Link href="/news" className="hover:text-yellow-200">News</Link>
           </div>
         </div>
