@@ -72,67 +72,67 @@ export default function NewsPage() {
     const currentDate = new Date()
     const newsItems: NewsItem[] = [
       {
-        title: "Kharif Crop Sowing Increases by 15% This Season",
-        description: "Farmers across India have increased kharif crop sowing area by 15% compared to last year, with rice and cotton leading the growth.",
+        title: "Rabi Crop Sowing Reaches 95% of Target Area Across India",
+        description: "Farmers have completed 95% of rabi crop sowing with wheat covering 31.2 million hectares, supported by adequate soil moisture and favorable weather conditions.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-        source: "Agriculture Today",
+        publishedAt: new Date(currentDate.getTime() - 1 * 60 * 60 * 1000).toISOString(),
+        source: "Agriculture Ministry",
         category: "farming"
       },
       {
-        title: "Wheat Prices Rise to ₹2,400 per Quintal in Major Mandis",
-        description: "Wheat prices have increased by ₹200 per quintal in major agricultural markets due to strong demand and reduced supply.",
+        title: "Onion Prices Surge to ₹80 per Kg in Delhi Markets",
+        description: "Onion prices have spiked due to delayed harvests in Maharashtra and Karnataka, with retail prices expected to remain high until February.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 4 * 60 * 60 * 1000).toISOString(),
-        source: "Krishi Jagran",
+        publishedAt: new Date(currentDate.getTime() - 3 * 60 * 60 * 1000).toISOString(),
+        source: "Market Watch",
         category: "prices"
       },
       {
-        title: "Government Announces ₹50,000 Crore Package for Farmers",
-        description: "The central government has announced a comprehensive package to support farmers with subsidies, insurance, and technology adoption.",
+        title: "PM-KISAN 16th Installment Released to 9.5 Crore Farmers",
+        description: "The government has released ₹19,000 crore under PM-KISAN scheme, benefiting 9.5 crore farmer families with ₹2,000 each.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 6 * 60 * 60 * 1000).toISOString(),
+        publishedAt: new Date(currentDate.getTime() - 4 * 60 * 60 * 1000).toISOString(),
         source: "PIB India",
         category: "policy"
       },
       {
-        title: "Monsoon Update: Normal Rainfall Expected in Next 15 Days",
-        description: "IMD forecasts normal to above-normal rainfall in major agricultural states, benefiting kharif crops across the country.",
+        title: "Cold Wave Alert: Farmers Advised to Protect Crops",
+        description: "IMD issues cold wave warning for North India. Farmers advised to use smoke, mulching, and irrigation to protect wheat and vegetable crops.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 8 * 60 * 60 * 1000).toISOString(),
+        publishedAt: new Date(currentDate.getTime() - 6 * 60 * 60 * 1000).toISOString(),
         source: "Weather India",
         category: "weather"
       },
       {
-        title: "Cotton Farmers Report 20% Higher Yield with New Varieties",
-        description: "Farmers in Gujarat and Maharashtra report significantly higher cotton yields using new drought-resistant varieties.",
+        title: "AI-Powered Crop Monitoring Drones Deployed in 500 Villages",
+        description: "Government launches drone-based crop monitoring in 500 villages across Punjab, Haryana, and UP for real-time pest and disease detection.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000).toISOString(),
-        source: "Cotton Association",
-        category: "farming"
+        publishedAt: new Date(currentDate.getTime() - 8 * 60 * 60 * 1000).toISOString(),
+        source: "Tech Agriculture",
+        category: "technology"
       },
       {
-        title: "Rice Export Prices Drop by ₹500 per Tonne",
-        description: "Indian rice export prices have decreased due to increased global supply and competition from other rice-producing countries.",
+        title: "Potato Prices Drop 40% as Harvesting Begins in UP",
+        description: "Potato prices have crashed from ₹35 to ₹20 per kg as fresh harvest arrives from Uttar Pradesh, providing relief to consumers.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 18 * 60 * 60 * 1000).toISOString(),
-        source: "Export News",
+        publishedAt: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000).toISOString(),
+        source: "Commodity News",
         category: "prices"
       },
       {
-        title: "Digital Agriculture: 50 Lakh Farmers Join Online Platforms",
-        description: "Over 50 lakh farmers have registered on digital agriculture platforms for direct market access and price information.",
+        title: "Organic Certification Made Digital: New Online Portal Launched",
+        description: "Agriculture Ministry launches digital platform for organic certification, reducing processing time from 6 months to 45 days.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+        publishedAt: new Date(currentDate.getTime() - 18 * 60 * 60 * 1000).toISOString(),
         source: "Digital India",
         category: "technology"
       },
       {
-        title: "Sugarcane Crushing Season Begins with Higher Recovery Rates",
-        description: "Sugar mills across UP and Maharashtra report 12% sugar recovery rate, higher than last year's 10.8%.",
+        title: "Record Mustard Production Expected This Season",
+        description: "India expects record mustard production of 12.5 million tonnes, 15% higher than last year, due to increased acreage and good weather.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 30 * 60 * 60 * 1000).toISOString(),
-        source: "Sugar News",
+        publishedAt: new Date(currentDate.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+        source: "Oilseed News",
         category: "farming"
       }
     ]
@@ -143,43 +143,43 @@ export default function NewsPage() {
     const currentDate = new Date()
     return [
       {
-        title: "Kharif Sowing Progresses Well Across India",
-        description: "Farmers have completed 85% of kharif sowing with favorable monsoon conditions supporting crop growth.",
+        title: "Winter Crop Health Monitoring Using Satellite Data",
+        description: "ISRO launches advanced satellite monitoring system for real-time assessment of wheat and mustard crop health across northern states.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 1 * 60 * 60 * 1000).toISOString(),
-        source: "Agriculture Ministry",
-        category: "farming"
+        publishedAt: new Date(currentDate.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        source: "ISRO Agriculture",
+        category: "technology"
       },
       {
-        title: "Onion Prices Stabilize at ₹25 per Kg",
-        description: "After weeks of volatility, onion prices have stabilized across major markets with improved supply from Maharashtra.",
+        title: "Tomato Prices Crash to ₹15 per Kg After Supply Surge",
+        description: "Tomato prices have dropped dramatically from ₹100 to ₹15 per kg as fresh supplies arrive from Karnataka and Andhra Pradesh.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 3 * 60 * 60 * 1000).toISOString(),
-        source: "Market Watch",
+        publishedAt: new Date(currentDate.getTime() - 4 * 60 * 60 * 1000).toISOString(),
+        source: "Vegetable Market",
         category: "prices"
       },
       {
-        title: "PM-KISAN Scheme Benefits 12 Crore Farmers",
-        description: "The PM-KISAN direct benefit transfer scheme has successfully reached 12 crore farmers with ₹6000 annual support.",
+        title: "New Crop Insurance Scheme Covers Climate Risks",
+        description: "Government launches enhanced crop insurance covering extreme weather events, benefiting 5 crore farmers with faster claim settlements.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 5 * 60 * 60 * 1000).toISOString(),
-        source: "Government News",
+        publishedAt: new Date(currentDate.getTime() - 6 * 60 * 60 * 1000).toISOString(),
+        source: "Insurance News",
         category: "policy"
       },
       {
-        title: "Drone Technology Adoption Increases in Agriculture",
-        description: "Over 10,000 farmers are now using drone technology for crop monitoring and pesticide spraying across India.",
+        title: "Blockchain Technology for Grain Procurement Launched",
+        description: "Punjab becomes first state to use blockchain for transparent grain procurement, ensuring fair prices and reducing middleman exploitation.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 7 * 60 * 60 * 1000).toISOString(),
+        publishedAt: new Date(currentDate.getTime() - 8 * 60 * 60 * 1000).toISOString(),
         source: "Tech Agriculture",
         category: "technology"
       },
       {
-        title: "Organic Farming Area Increases by 25%",
-        description: "India's organic farming area has grown by 25% this year, with increasing demand for chemical-free produce.",
+        title: "Natural Farming Adoption Reaches 1 Million Farmers",
+        description: "Zero Budget Natural Farming program successfully adopted by 1 million farmers, reducing input costs by 30% while maintaining yields.",
         url: "#",
-        publishedAt: new Date(currentDate.getTime() - 10 * 60 * 60 * 1000).toISOString(),
-        source: "Organic India",
+        publishedAt: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000).toISOString(),
+        source: "Sustainable Agriculture",
         category: "farming"
       }
     ]
@@ -231,8 +231,9 @@ export default function NewsPage() {
       <main className="container mx-auto p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-green-700">
-              {t('newsTitle')}
+            <h1 className="text-4xl font-bold text-green-700 flex items-center gap-3">
+              📰 {t('newsTitle')}
+              <span className="text-sm bg-red-500 text-white px-2 py-1 rounded-full animate-pulse">LIVE</span>
             </h1>
             <button
               onClick={loadFarmingNews}
@@ -342,25 +343,34 @@ export default function NewsPage() {
             </div>
           )}
 
-          <div className="mt-8 bg-green-100 rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-green-700 mb-3">📱 Stay Updated</h3>
+          <div className="mt-8 bg-gradient-to-r from-green-100 to-blue-50 rounded-lg p-6 border border-green-200">
+            <h3 className="text-xl font-semibold text-green-700 mb-3">🚀 Latest Agriculture Updates</h3>
             <p className="text-green-700 mb-4">
-              Get the latest farming news, price alerts, and weather updates delivered automatically. 
-              Our news section updates every hour with relevant information for Indian farmers.
+              Stay ahead with real-time agricultural news, market intelligence, and policy updates. 
+              Our AI-powered news aggregation brings you the most relevant information for smart farming decisions.
             </p>
-            <div className="grid md:grid-cols-3 gap-4 text-sm">
+            <div className="grid md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✅</span>
-                <span>Real-time price updates</span>
+                <span className="text-green-600">📊</span>
+                <span>Live commodity prices</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✅</span>
-                <span>Government policy news</span>
+                <span className="text-blue-600">🌦️</span>
+                <span>Weather & climate alerts</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✅</span>
-                <span>Weather alerts & forecasts</span>
+                <span className="text-purple-600">🏛️</span>
+                <span>Policy & scheme updates</span>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-orange-600">💻</span>
+                <span>AgriTech innovations</span>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-white rounded-md border-l-4 border-green-500">
+              <p className="text-sm text-gray-700">
+                <strong>🔥 Trending:</strong> AI crop monitoring, blockchain grain procurement, and digital organic certification are revolutionizing Indian agriculture.
+              </p>
             </div>
           </div>
         </div>

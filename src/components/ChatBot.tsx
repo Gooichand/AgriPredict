@@ -53,66 +53,92 @@ export default function ChatBot() {
   }
 
   const generateBotResponse = async (userMessage: string): Promise<string> => {
-    // Check for pincode queries
-    const pincodeMatch = userMessage.match(/\b\d{6}\b/)
-    if (pincodeMatch) {
-      const location = getLocationByPincode(pincodeMatch[0])
-      if (location) {
-        return `📍 Location Found:\n\n🏡 City: ${location.city}\n🏞️ State: ${location.state}\n📮 PIN: ${location.pincode}${location.district ? `\n🏘️ District: ${location.district}` : ''}\n\nThis is a great agricultural region! I can help you with farming information for this area.`
+    try {
+      // Get farm data for context
+      let farmContext = ''
+      if (typeof window !== 'undefined') {
+        const farmData = localStorage.getItem('farmData')
+        if (farmData) {
+          const parsed = JSON.parse(farmData)
+          farmContext = `User's farm: ${parsed.crop} crop, ${parsed.farmSize} acres, located in ${parsed.location}`
+        }
       }
-    }
 
-    // Check for location search
-    if (userMessage.toLowerCase().includes('location') || userMessage.toLowerCase().includes('city') || userMessage.toLowerCase().includes('pincode')) {
-      const locations = searchLocations(userMessage)
-      if (locations.length > 0) {
-        const topLocations = locations.slice(0, 5)
-        let response = '📍 Found these locations:\n\n'
-        topLocations.forEach(loc => {
-          response += `• ${loc.city}, ${loc.state} - ${loc.pincode}\n`
+      // Try direct Gemini API call first (works without server restart)
+      try {
+        const geminiKey = 'AIzaSyBmYCbl9o23oNiA_rzro1h6A0KKpl8l580'
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are KisanSafe AI, a friendly and expert agricultural advisor for Indian farmers. ${farmContext ? `Context: ${farmContext}.` : ''} 
+
+Respond in ${language === 'hi' ? 'Hindi' : 'English'} language. Be helpful, practical, and encouraging. Provide specific, actionable farming advice. Keep responses concise but informative (2-4 sentences). Use emojis appropriately.
+
+User question: ${userMessage}`
+              }]
+            }]
+          })
         })
-        response += '\nI can provide farming information for any of these areas!'
-        return response
+        
+        if (response.ok) {
+          const data = await response.json()
+          const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text
+          if (aiResponse) {
+            return aiResponse.trim()
+          }
+        }
+      } catch (directError) {
+        console.log('Direct Gemini call failed:', directError)
       }
-    }
 
-    // Try smart response from knowledge base first
-    const smartResponse = getSmartResponse(userMessage, language)
-    if (smartResponse) {
-      return smartResponse
-    }
+      // Fallback to server API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          language: language,
+          context: farmContext
+        })
+      })
 
-    // Fallback responses
-    const fallbackResponses = {
-      en: {
-        greeting: "Hello! I'm KisanSafe AI Assistant. I can help with crops, weather, prices, government schemes, and farming tips. What would you like to know?",
-        help: "I can assist you with:\n\n🌾 Crop cultivation (Rice, Wheat, Cotton, etc.)\n🌦️ Weather updates & alerts\n💰 Market prices & trends\n🏛️ Government schemes & subsidies\n🦠 Disease & pest management\n🌱 Soil health & fertilizers\n💧 Irrigation guidance\n\nJust ask your question!",
-        price: "💰 Current Market Prices:\n\n• Rice: ₹2,100-2,300/quintal\n• Wheat: ₹2,200-2,400/quintal\n• Cotton: ₹6,000-7,000/quintal\n• Sugarcane: ₹350-380/quintal\n• Onion: ₹2,500-3,000/quintal\n• Potato: ₹1,800-2,200/quintal\n• Soybean: ₹4,200-4,500/quintal\n\nPrices vary by location and quality.",
-        default: "I'm here to help with your farming questions! You can ask me about:\n\n🌾 Specific crops (rice, wheat, cotton, etc.)\n🌦️ Weather and farming alerts\n💰 Market prices\n🏛️ Government schemes\n🦠 Plant diseases\n🌱 Soil and fertilizers\n\nWhat would you like to know?"
-      },
-      hi: {
-        greeting: "नमस्ते! मैं किसानसेफ AI सहायक हूं। मैं फसल, मौसम, भाव, सरकारी योजनाओं और खेती की जानकारी में मदद कर सकता हूं। आप क्या जानना चाहते हैं?",
-        help: "मैं आपकी इन चीजों में मदद कर सकता हूं:\n\n🌾 फसल की खेती (धान, गेहूं, कपास आदि)\n🌦️ मौसम अपडेट और चेतावनी\n💰 बाजार भाव और रुझान\n🏛️ सरकारी योजनाएं और सब्सिडी\n🦠 बीमारी और कीट प्रबंधन\n🌱 मिट्टी की सेहत और खाद\n💧 सिंचाई मार्गदर्शन\n\nबस अपना सवाल पूछें!",
-        price: "💰 आज के बाजार भाव:\n\n• धान: ₹2,100-2,300/क्विंटल\n• गेहूं: ₹2,200-2,400/क्विंटल\n• कपास: ₹6,000-7,000/क्विंटल\n• गन्ना: ₹350-380/क्विंटल\n• प्याज: ₹2,500-3,000/क्विंटल\n• आलू: ₹1,800-2,200/क्विंटल\n• सोयाबीन: ₹4,200-4,500/क्विंटल\n\nभाव स्थान और गुणवत्ता के अनुसार अलग होते हैं।",
-        default: "मैं आपके खेती के सवालों में मदद के लिए यहां हूं! आप मुझसे पूछ सकते हैं:\n\n🌾 विशिष्ट फसलें (धान, गेहूं, कपास आदि)\n🌦️ मौसम और खेती की चेतावनी\n💰 बाजार भाव\n🏛️ सरकारी योजनाएं\n🦠 पौधों की बीमारियां\n🌱 मिट्टी और खाद\n\nआप क्या जानना चाहते हैं?"
+      if (response.ok) {
+        const data = await response.json()
+        if (data.response) {
+          return data.response
+        }
       }
+      
+      throw new Error('All AI services failed')
+      
+    } catch (error) {
+      console.error('AI Error:', error)
+      
+      // Enhanced fallback responses
+      return getEnhancedFallback(userMessage, language)
     }
+  }
 
-    const lowerMessage = userMessage.toLowerCase()
-    const langResponses = fallbackResponses[language as keyof typeof fallbackResponses] || fallbackResponses.en
-
-    // Pattern matching for common queries
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('नमस्ते') || lowerMessage.includes('हैलो')) {
-      return langResponses.greeting
+  const getEnhancedFallback = (userMessage: string, language: string): string => {
+    const lowerInput = userMessage.toLowerCase()
+    const isHindi = language === 'hi'
+    
+    // Fertilizer specific response
+    if (lowerInput.includes('fertilizer') || lowerInput.includes('fertiliser') || lowerInput.includes('खाद')) {
+      return isHindi
+        ? "🌱 **खाद का सही उपयोग:**\n\n1️⃣ **मिट्टी जांच**: पहले pH और NPK लेवल जांचें\n2️⃣ **NPK अनुपात**: 120:60:40 किलो/हेक्टेयर\n3️⃣ **समय**: बुआई के समय + 30-45 दिन बाद\n4️⃣ **जैविक**: 5-10 टन गोबर खाद/हेक्टेयर\n\n**चेतावनी**: ज्यादा खाद नुकसानदायक!"
+        : "🌱 **Smart Fertilizer Application:**\n\n1️⃣ **Soil Test First**: Check pH and NPK levels\n2️⃣ **NPK Ratio**: 120:60:40 kg per hectare\n3️⃣ **Split Application**: Base dose + top dressing after 30-45 days\n4️⃣ **Organic Matter**: Add 5-10 tons farmyard manure\n5️⃣ **Micronutrients**: Zinc, Iron, Boron as needed\n\n**Warning**: Over-fertilization can damage crops and soil!"
     }
-    if (lowerMessage.includes('help') || lowerMessage.includes('मदद') || lowerMessage.includes('सहायता')) {
-      return langResponses.help
-    }
-    if (lowerMessage.includes('price') || lowerMessage.includes('भाव') || lowerMessage.includes('दाम') || lowerMessage.includes('rate')) {
-      return langResponses.price
-    }
-
-    return langResponses.default
+    
+    // Default intelligent response
+    return isHindi
+      ? "🤖 मैं आपके खेती के सवाल का जवाब देने के लिए तैयार हूं! आप मुझसे पूछ सकते हैं:\n\n• फसल की देखभाल और पैदावार\n• खाद-पानी और मिट्टी\n• बीमारी-कीट का इलाज\n• बाजार भाव और बिक्री\n• सरकारी योजनाएं\n\nकृपया विस्तार से पूछें!"
+      : "🤖 I'm ready to answer your farming questions! You can ask me about:\n\n• Crop care and yield improvement\n• Fertilizers, irrigation, and soil health\n• Disease and pest management\n• Market prices and selling strategies\n• Government schemes and subsidies\n• Weather alerts and farming calendar\n\nPlease ask me a specific question for detailed guidance!"
   }
 
   const handleSendMessage = async () => {
@@ -129,18 +155,31 @@ export default function ChatBot() {
     setInputText('')
     setIsTyping(true)
 
-    // Simulate typing delay
+    // Get AI response with longer delay for better UX
     setTimeout(async () => {
-      const botResponse = await generateBotResponse(inputText)
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: botResponse,
-        isBot: true,
-        timestamp: new Date()
+      try {
+        const botResponse = await generateBotResponse(inputText)
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: botResponse,
+          isBot: true,
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, botMessage])
+      } catch (error) {
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: language === 'hi' 
+            ? "क्षमा करें, मुझे कुछ तकनीकी समस्या हो रही है। कृपया फिर से कोशिश करें।"
+            : "Sorry, I'm experiencing some technical issues. Please try again.",
+          isBot: true,
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, errorMessage])
+      } finally {
+        setIsTyping(false)
       }
-      setMessages(prev => [...prev, botMessage])
-      setIsTyping(false)
-    }, 1000)
+    }, 1500)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
