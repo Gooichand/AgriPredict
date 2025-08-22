@@ -1,17 +1,122 @@
-// Free AI service using Hugging Face Inference API
+// Real AI service with multiple free providers
 export class AIService {
-  private static readonly HF_API_URL = 'https://api-inference.huggingface.co/models'
+  private static readonly PROVIDERS = {
+    HUGGING_FACE: 'https://api-inference.huggingface.co/models',
+    OPENAI: 'https://api.openai.com/v1/chat/completions',
+    GEMINI: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+  }
   
-  // Free Hugging Face models
   private static readonly MODELS = {
-    TEXT_GENERATION: 'microsoft/DialoGPT-medium',
-    CROP_ANALYSIS: 'google/flan-t5-base',
-    WEATHER_ANALYSIS: 'facebook/blenderbot-400M-distill'
+    HF_CHAT: 'microsoft/DialoGPT-medium',
+    HF_INSTRUCT: 'microsoft/DialoGPT-large',
+    OPENAI_MODEL: 'gpt-3.5-turbo'
   }
 
   static async generateAIResponse(userInput: string, farmData: any) {
-    // Use intelligent pattern matching for reliable responses
+    // Try multiple AI providers for 100% reliability
+    try {
+      // First try: OpenAI (most reliable)
+      const openaiResponse = await this.callOpenAI(userInput, farmData)
+      if (openaiResponse) return openaiResponse
+      
+      // Second try: Google Gemini (free)
+      const geminiResponse = await this.callGemini(userInput, farmData)
+      if (geminiResponse) return geminiResponse
+      
+      // Third try: Hugging Face (always free)
+      const hfResponse = await this.callHuggingFace(userInput, farmData)
+      if (hfResponse) return hfResponse
+      
+    } catch (error) {
+      console.log('AI providers unavailable, using intelligent fallback')
+    }
+    
+    // Fallback: Intelligent pattern matching (always works)
     return this.getIntelligentResponse(userInput, farmData)
+  }
+
+  private static async callOpenAI(userInput: string, farmData: any) {
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY
+    if (!apiKey || apiKey === 'your_openai_key_here') return null
+    
+    try {
+      const response = await fetch(this.PROVIDERS.OPENAI, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: this.MODELS.OPENAI_MODEL,
+          messages: [{
+            role: 'system',
+            content: `You are an expert agricultural advisor. The user has a ${farmData.crop} farm in ${farmData.location} covering ${farmData.farmSize} acres. Provide practical, actionable farming advice.`
+          }, {
+            role: 'user',
+            content: userInput
+          }],
+          max_tokens: 200,
+          temperature: 0.7
+        })
+      })
+      
+      const data = await response.json()
+      return data.choices?.[0]?.message?.content
+    } catch {
+      return null
+    }
+  }
+
+  private static async callGemini(userInput: string, farmData: any) {
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
+    if (!apiKey || apiKey === 'your_gemini_key_here') return null
+    
+    try {
+      const response = await fetch(`${this.PROVIDERS.GEMINI}?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are an agricultural expert. Farm details: ${farmData.crop} crop in ${farmData.location}, ${farmData.farmSize} acres. User question: ${userInput}. Provide helpful farming advice.`
+            }]
+          }]
+        })
+      })
+      
+      const data = await response.json()
+      return data.candidates?.[0]?.content?.parts?.[0]?.text
+    } catch {
+      return null
+    }
+  }
+
+  private static async callHuggingFace(userInput: string, farmData: any) {
+    const apiKey = process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY
+    if (!apiKey || apiKey === 'your_hf_token_here') return null
+    
+    try {
+      const response = await fetch(`${this.PROVIDERS.HUGGING_FACE}/${this.MODELS.HF_INSTRUCT}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          inputs: `Agricultural Expert: You have a ${farmData.crop} farm in ${farmData.location}. Question: ${userInput}\nAnswer:`,
+          parameters: {
+            max_new_tokens: 150,
+            temperature: 0.7,
+            return_full_text: false
+          }
+        })
+      })
+      
+      const data = await response.json()
+      return data[0]?.generated_text?.trim()
+    } catch {
+      return null
+    }
   }
 
   private static getIntelligentResponse(input: string, farmData: any) {
