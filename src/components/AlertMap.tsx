@@ -1,18 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
+import dynamic from 'next/dynamic'
 import { WeatherService } from '@/lib/aiService'
 
-// Fix for default markers
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-})
+// Dynamically import map components to avoid SSR issues
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false })
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false })
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false })
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false })
+
+// Fix for default markers - only run on client side
+if (typeof window !== 'undefined') {
+  const L = require('leaflet')
+  require('leaflet/dist/leaflet.css')
+  
+  delete (L.Icon.Default.prototype as any)._getIconUrl
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  })
+}
 
 export default function AlertMap() {
   const [farmData, setFarmData] = useState<any>(null)
@@ -22,8 +31,11 @@ export default function AlertMap() {
   const [locationData, setLocationData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [mapReady, setMapReady] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+    
     if (typeof window !== 'undefined') {
       const data = localStorage.getItem('farmData')
       const selectedLocation = localStorage.getItem('selectedLocation')
@@ -117,11 +129,7 @@ export default function AlertMap() {
         const coords = getDistrictCoordinates(postOffice.District, postOffice.State)
         if (coords) {
           setCoordinates(coords)
-          setMapReady(false)
-          setTimeout(() => {
-            setMapKey(prev => prev + 1)
-            setMapReady(true)
-          }, 100)
+          setMapKey(prev => prev + 1)
         }
       }
     } catch (error) {
@@ -171,11 +179,7 @@ export default function AlertMap() {
     
     if (coords) {
       setCoordinates(coords)
-      setMapReady(false)
-      setTimeout(() => {
-        setMapKey(prev => prev + 1)
-        setMapReady(true)
-      }, 100)
+      setMapKey(prev => prev + 1)
     }
   }
 
@@ -310,13 +314,12 @@ export default function AlertMap() {
           />
         )}
         
-        {coordinates && coordinates.length === 2 ? (
+        {isClient && coordinates && coordinates.length === 2 ? (
           <MapContainer
             center={coordinates}
             zoom={12}
             style={{ height: '100%', width: '100%' }}
             key={mapKey}
-            whenCreated={() => setMapReady(true)}
           >
             <TileLayer
               url={getMapTileUrl()}

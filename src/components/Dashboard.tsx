@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import YieldChart from './YieldChart'
 import AlertMap from './AlertMap'
 import AIRecommendations from './AIRecommendations'
@@ -21,7 +21,9 @@ interface FarmData {
 
 export default function Dashboard() {
   const [farmData, setFarmData] = useState<FarmData | null>(null)
+  const [activeSection, setActiveSection] = useState('overview')
   const { t } = useLanguage()
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({})
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -31,6 +33,32 @@ export default function Dashboard() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['overview', 'schedule', 'recommendations', 'map', 'health', 'sources']
+      const scrollPosition = window.scrollY + 200
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sections[i])
+        if (element && element.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i])
+          break
+        }
+      }
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [farmData])
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   const getCropYield = (crop: string, state?: string, district?: string) => {
     // Base yields by crop
@@ -161,7 +189,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Welcome to KisanSafe!</h2>
+          <h2 className="text-2xl font-bold mb-4">Welcome to {t('title')}!</h2>
           <p className="mb-4">Please set up your farm information first.</p>
           <Link href="/crop-setup" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
             Set Up Farm
@@ -197,8 +225,38 @@ export default function Dashboard() {
         </div>
       </nav>
 
+      {/* Scroll Spy Navigation */}
+      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 bg-white rounded-lg shadow-lg p-2">
+        <div className="flex flex-col gap-2">
+          {[
+            { id: 'overview', icon: '📊', label: 'Overview' },
+            { id: 'schedule', icon: '📅', label: 'Schedule' },
+            { id: 'recommendations', icon: '🤖', label: 'AI Tips' },
+            { id: 'map', icon: '🗺️', label: 'Map' },
+            { id: 'health', icon: '🔬', label: 'Health' },
+            { id: 'sources', icon: '📈', label: 'Data' }
+          ].map(section => (
+            <button
+              key={section.id}
+              onClick={() => scrollToSection(section.id)}
+              className={`p-2 rounded-lg text-sm transition-all duration-200 ${
+                activeSection === section.id 
+                  ? 'bg-green-600 text-white shadow-md' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-green-100'
+              }`}
+              title={section.label}
+            >
+              <div className="text-lg">{section.icon}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <main className="container mx-auto p-6">
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 rounded-lg mb-6">
+        <div 
+          id="overview"
+          className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 rounded-lg mb-6"
+        >
           <h2 className="text-3xl font-bold mb-2">🌾 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Farm Dashboard</h2>
           <div className="flex flex-wrap gap-4 text-sm">
             <span>📍 {farmData.location}</span>
@@ -211,7 +269,7 @@ export default function Dashboard() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-2">Predicted Yield</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('yieldPrediction')}</h3>
             <p className="text-3xl font-bold text-green-600">
               {getCropYield(farmData.crop, farmData.state, farmData.district)} tons/acre
             </p>
@@ -225,7 +283,7 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">🚨 Live Alerts</h3>
+            <h3 className="text-xl font-semibold mb-4">🚨 {t('weatherAlerts')}</h3>
             <div className="bg-yellow-100 p-3 rounded border-l-4 border-yellow-500">
               <p className="font-semibold">{getCropAlert(farmData.crop, farmData.state, farmData.district).type}</p>
               <p className="text-sm">{getCropAlert(farmData.crop, farmData.state, farmData.district).message}</p>
@@ -239,7 +297,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-6 bg-white p-6 rounded-lg shadow">
+        <div 
+          id="schedule"
+          className="mt-6 bg-white p-6 rounded-lg shadow"
+        >
           <h3 className="text-xl font-semibold mb-4">📅 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Schedule for {farmData.state || 'Your Region'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-green-50 p-4 rounded-lg">
@@ -257,8 +318,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">🤖 AI Recommendations for {farmData.district || farmData.state || 'Your Area'}</h3>
+        <div 
+          id="recommendations"
+          className="mt-6 bg-white p-6 rounded-lg shadow"
+        >
+          <h3 className="text-xl font-semibold mb-4">🤖 {t('recommendations')} for {farmData.district || farmData.state || 'Your Area'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <h4 className="font-semibold text-blue-800 mb-2">💧 Water Management</h4>
@@ -279,7 +343,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-6">
+        <div 
+          id="map"
+          className="mt-6"
+        >
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4">🗺️ Weather & Alert Map - {farmData.district || farmData.state}</h3>
             <div className="bg-gray-100 p-4 rounded-lg mb-4">
@@ -290,8 +357,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">🔬 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Health Analysis</h3>
+        <div 
+          id="health"
+          className="mt-6 bg-white p-6 rounded-lg shadow"
+        >
+          <h3 className="text-xl font-semibold mb-4">🔬 {t('cropHealthAnalysis')}</h3>
           <div className="bg-green-50 p-4 rounded-lg mb-4">
             <h4 className="font-semibold text-green-800 mb-2">Farm Status: {farmData.location}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -316,13 +386,16 @@ export default function Dashboard() {
           <CropHealthAnalysis farmData={farmData} />
         </div>
 
-        <div className="mt-6 bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-lg border border-blue-100">
+        <div 
+          id="sources"
+          className="mt-6 bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-lg border border-blue-100"
+        >
           <div className="flex items-center mb-6">
             <div className="bg-gradient-to-r from-blue-600 to-green-600 p-3 rounded-full mr-4">
               <span className="text-white text-xl">📊</span>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-800">Trusted Data Sources</h3>
+              <h3 className="text-2xl font-bold text-gray-800">{t('dataSources')}</h3>
               <p className="text-sm text-gray-600">Powered by India's leading agricultural institutions</p>
             </div>
           </div>

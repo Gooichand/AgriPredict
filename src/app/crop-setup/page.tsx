@@ -696,20 +696,20 @@ export default function CropSetupPage() {
           {/* Content */}
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-6 text-center uppercase p-4 rounded-lg flex items-center justify-center gap-2" style={{color: '#2c3e2d'}}>
-              Farm Setup
+              {t('cropDetails')}
             </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Location Search Section */}
             <div className="border-2 border-green-200 rounded-lg p-4 bg-green-50">
-              <h3 className="text-lg font-semibold mb-3 text-green-800">Location</h3>
+              <h3 className="text-lg font-semibold mb-3 text-green-800">{t('location')}</h3>
               
               <div className="flex gap-2 mb-3">
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Enter pincode (110001) or city/area name (Mumbai, Andheri)"
+                  placeholder={t('locationPlaceholder')}
                   className="flex-1 px-3 py-2 border rounded-md text-sm"
                 />
                 
@@ -719,7 +719,7 @@ export default function CropSetupPage() {
                   disabled={locationLoading}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
                 >
-                  {locationLoading ? 'Searching...' : 'Search'}
+                  {locationLoading ? t('searching') : t('search')}
                 </button>
                 
                 <button
@@ -732,11 +732,11 @@ export default function CropSetupPage() {
                   {isGettingLocation ? (
                     <>
                       <div className="animate-spin h-3 w-3 border border-white border-t-transparent rounded-full"></div>
-                      Detecting...
+                      {t('detecting')}
                     </>
                   ) : (
                     <>
-                      📍 Auto Detect
+                      📍 {t('autoDetect')}
                     </>
                   )}
                 </button>
@@ -744,7 +744,7 @@ export default function CropSetupPage() {
 
               {selectedLocation && (
                 <div className="mb-3 p-3 bg-green-100 border border-green-300 rounded-md">
-                  <div className="text-sm font-medium text-green-800">Selected:</div>
+                  <div className="text-sm font-medium text-green-800">{t('selected')}</div>
                   <div className="text-green-700 font-medium">{selectedLocation.Name}</div>
                   <div className="text-sm text-green-600">{selectedLocation.District}, {selectedLocation.State} - {selectedLocation.Pincode}</div>
                 </div>
@@ -770,10 +770,10 @@ export default function CropSetupPage() {
 
 
             <div className="relative">
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>Crop Type</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('cropType')}</label>
               <input
                 type="text"
-                placeholder="Search for your crop..."
+                placeholder={t('cropPlaceholder')}
                 value={crop || cropSearch}
                 onChange={(e) => {
                   setCropSearch(e.target.value)
@@ -814,10 +814,10 @@ export default function CropSetupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>Farm Size (in acres)</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('farmSize')}</label>
               <input
                 type="number"
-                placeholder="Enter farm size in acres"
+                placeholder={t('farmSizePlaceholder')}
                 value={farmSize}
                 onChange={(e) => setFarmSize(e.target.value)}
                 className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -832,7 +832,7 @@ export default function CropSetupPage() {
               style={{backgroundColor: '#3498db', color: '#ffffff'}}
               disabled={!selectedLocation || !crop || !farmSize}
             >
-Start Farming Dashboard
+{t('startDashboard')}
             </button>
           </form>
           </div>
