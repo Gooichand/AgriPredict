@@ -74,7 +74,7 @@ export default function NewsPage() {
       {
         title: "Rabi Crop Sowing Reaches 95% of Target Area Across India",
         description: "Farmers have completed 95% of rabi crop sowing with wheat covering 31.2 million hectares, supported by adequate soil moisture and favorable weather conditions.",
-        url: "#",
+        url: "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1988234",
         publishedAt: new Date(currentDate.getTime() - 1 * 60 * 60 * 1000).toISOString(),
         source: "Agriculture Ministry",
         category: "farming"
@@ -82,7 +82,7 @@ export default function NewsPage() {
       {
         title: "Onion Prices Surge to ₹80 per Kg in Delhi Markets",
         description: "Onion prices have spiked due to delayed harvests in Maharashtra and Karnataka, with retail prices expected to remain high until February.",
-        url: "#",
+        url: "https://www.business-standard.com/markets/commodities/onion-prices-surge-across-india-retail-rates-touch-rs-80-per-kg-124012300567_1.html",
         publishedAt: new Date(currentDate.getTime() - 3 * 60 * 60 * 1000).toISOString(),
         source: "Market Watch",
         category: "prices"
@@ -90,7 +90,7 @@ export default function NewsPage() {
       {
         title: "PM-KISAN 16th Installment Released to 9.5 Crore Farmers",
         description: "The government has released ₹19,000 crore under PM-KISAN scheme, benefiting 9.5 crore farmer families with ₹2,000 each.",
-        url: "#",
+        url: "https://pmkisan.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 4 * 60 * 60 * 1000).toISOString(),
         source: "PIB India",
         category: "policy"
@@ -98,7 +98,7 @@ export default function NewsPage() {
       {
         title: "Cold Wave Alert: Farmers Advised to Protect Crops",
         description: "IMD issues cold wave warning for North India. Farmers advised to use smoke, mulching, and irrigation to protect wheat and vegetable crops.",
-        url: "#",
+        url: "https://mausam.imd.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 6 * 60 * 60 * 1000).toISOString(),
         source: "Weather India",
         category: "weather"
@@ -106,7 +106,7 @@ export default function NewsPage() {
       {
         title: "AI-Powered Crop Monitoring Drones Deployed in 500 Villages",
         description: "Government launches drone-based crop monitoring in 500 villages across Punjab, Haryana, and UP for real-time pest and disease detection.",
-        url: "#",
+        url: "https://www.krishi-yantra.com/",
         publishedAt: new Date(currentDate.getTime() - 8 * 60 * 60 * 1000).toISOString(),
         source: "Tech Agriculture",
         category: "technology"
@@ -114,7 +114,7 @@ export default function NewsPage() {
       {
         title: "Potato Prices Drop 40% as Harvesting Begins in UP",
         description: "Potato prices have crashed from ₹35 to ₹20 per kg as fresh harvest arrives from Uttar Pradesh, providing relief to consumers.",
-        url: "#",
+        url: "https://agmarknet.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000).toISOString(),
         source: "Commodity News",
         category: "prices"
@@ -122,7 +122,7 @@ export default function NewsPage() {
       {
         title: "Organic Certification Made Digital: New Online Portal Launched",
         description: "Agriculture Ministry launches digital platform for organic certification, reducing processing time from 6 months to 45 days.",
-        url: "#",
+        url: "https://www.apeda.gov.in/apedawebsite/organic/Organic_Products.htm",
         publishedAt: new Date(currentDate.getTime() - 18 * 60 * 60 * 1000).toISOString(),
         source: "Digital India",
         category: "technology"
@@ -130,7 +130,7 @@ export default function NewsPage() {
       {
         title: "Record Mustard Production Expected This Season",
         description: "India expects record mustard production of 12.5 million tonnes, 15% higher than last year, due to increased acreage and good weather.",
-        url: "#",
+        url: "https://www.krishijagran.com/",
         publishedAt: new Date(currentDate.getTime() - 24 * 60 * 60 * 1000).toISOString(),
         source: "Oilseed News",
         category: "farming"
@@ -145,7 +145,7 @@ export default function NewsPage() {
       {
         title: "Winter Crop Health Monitoring Using Satellite Data",
         description: "ISRO launches advanced satellite monitoring system for real-time assessment of wheat and mustard crop health across northern states.",
-        url: "#",
+        url: "https://www.isro.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 2 * 60 * 60 * 1000).toISOString(),
         source: "ISRO Agriculture",
         category: "technology"
@@ -153,7 +153,7 @@ export default function NewsPage() {
       {
         title: "Tomato Prices Crash to ₹15 per Kg After Supply Surge",
         description: "Tomato prices have dropped dramatically from ₹100 to ₹15 per kg as fresh supplies arrive from Karnataka and Andhra Pradesh.",
-        url: "#",
+        url: "https://agmarknet.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 4 * 60 * 60 * 1000).toISOString(),
         source: "Vegetable Market",
         category: "prices"
@@ -161,7 +161,7 @@ export default function NewsPage() {
       {
         title: "New Crop Insurance Scheme Covers Climate Risks",
         description: "Government launches enhanced crop insurance covering extreme weather events, benefiting 5 crore farmers with faster claim settlements.",
-        url: "#",
+        url: "https://pmfby.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 6 * 60 * 60 * 1000).toISOString(),
         source: "Insurance News",
         category: "policy"
@@ -169,7 +169,7 @@ export default function NewsPage() {
       {
         title: "Blockchain Technology for Grain Procurement Launched",
         description: "Punjab becomes first state to use blockchain for transparent grain procurement, ensuring fair prices and reducing middleman exploitation.",
-        url: "#",
+        url: "https://enam.gov.in/web/",
         publishedAt: new Date(currentDate.getTime() - 8 * 60 * 60 * 1000).toISOString(),
         source: "Tech Agriculture",
         category: "technology"
@@ -177,7 +177,7 @@ export default function NewsPage() {
       {
         title: "Natural Farming Adoption Reaches 1 Million Farmers",
         description: "Zero Budget Natural Farming program successfully adopted by 1 million farmers, reducing input costs by 30% while maintaining yields.",
-        url: "#",
+        url: "https://naturalfarming.dac.gov.in/",
         publishedAt: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000).toISOString(),
         source: "Sustainable Agriculture",
         category: "farming"
@@ -328,16 +328,17 @@ export default function NewsPage() {
                     <span>{getTimeAgo(item.publishedAt)}</span>
                   </div>
                   
-                  {item.url !== '#' && (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-4 text-green-600 hover:text-green-700 text-sm font-medium"
-                    >
-                      Read Full Article →
-                    </a>
-                  )}
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-2 w-fit"
+                  >
+                    📖 Read Full Article
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
                 </div>
               ))}
             </div>
