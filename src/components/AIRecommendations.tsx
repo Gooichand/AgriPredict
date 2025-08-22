@@ -119,11 +119,11 @@ export default function AIRecommendations({ farmData }: AIRecommendationsProps) 
       {/* Smart Weather Alert */}
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-          🌤️ AI Weather-Based Alert
+          🌤️ Live Weather-Based Alert
         </h3>
         <p className="text-gray-700">{weatherAlert}</p>
-        <p className="text-xs text-gray-500 mt-2">
-          Generated using real-time weather data and crop-specific AI analysis
+        <p className="text-xs text-blue-600 mt-2">
+          ✅ Real-time weather analysis • Updated: {new Date().toLocaleTimeString()}
         </p>
       </div>
 
