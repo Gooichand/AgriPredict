@@ -531,7 +531,7 @@ export default function CropSetupPage() {
       </nav>
 
       <main className="container mx-auto p-6 flex items-center justify-center min-h-[80vh] relative z-10">
-        <div className="p-8 rounded-xl shadow-2xl w-full max-w-lg text-base relative overflow-hidden" style={{backgroundColor: '#ffffff'}}>
+        <div className="p-8 rounded-xl shadow-2xl w-full text-base relative overflow-hidden" style={{backgroundColor: '#ffffff', maxWidth: '605px'}}>
           {/* Content */}
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-6 text-center uppercase p-4 rounded-lg flex items-center justify-center gap-2" style={{color: '#2c3e2d'}}>
@@ -601,7 +601,7 @@ export default function CropSetupPage() {
                   onClick={getDeviceLocation}
                   disabled={isGettingLocation}
                   className="w-full px-4 py-2 rounded-lg text-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
-                  style={{backgroundColor: '#3498db', color: '#ffffff'}}
+                  style={{backgroundColor: '#22c55e', color: '#ffffff'}}
                 >
                   {isGettingLocation ? '📍 Getting Location...' : '🔄 Refresh My Location'}
                 </button>
@@ -674,7 +674,7 @@ export default function CropSetupPage() {
             <button
               type="submit"
               className="w-full p-3 rounded-lg font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200 hover:opacity-90"
-              style={{backgroundColor: '#3498db', color: '#ffffff'}}
+              style={{backgroundColor: '#22c55e', color: '#ffffff'}}
             >
               Get Predictions
             </button>
