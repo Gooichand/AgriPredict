@@ -22,6 +22,8 @@ interface FarmData {
 export default function Dashboard() {
   const [farmData, setFarmData] = useState<FarmData | null>(null)
   const [activeSection, setActiveSection] = useState('overview')
+  const [showWarningPopup, setShowWarningPopup] = useState(false)
+  const [cropWarning, setCropWarning] = useState<{isWarning: boolean, message: string, severity: string} | null>(null)
   const { t } = useLanguage()
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({})
 
@@ -29,7 +31,27 @@ export default function Dashboard() {
     if (typeof window !== 'undefined') {
       const data = localStorage.getItem('farmData')
       if (data) {
-        setFarmData(JSON.parse(data))
+        try {
+          setFarmData(JSON.parse(data))
+        } catch (error) {
+          console.warn('Invalid farm data in localStorage')
+          localStorage.removeItem('farmData')
+        }
+      }
+      
+      // Check for crop warning
+      const warningData = localStorage.getItem('cropWarning')
+      if (warningData) {
+        try {
+          const warning = JSON.parse(warningData)
+          setCropWarning(warning)
+          if (warning.isWarning) {
+            setShowWarningPopup(true)
+          }
+          localStorage.removeItem('cropWarning')
+        } catch (error) {
+          console.warn('Invalid warning data in localStorage')
+        }
       }
     }
   }, [])
@@ -121,67 +143,125 @@ export default function Dashboard() {
   }
 
   const getPlantingSchedule = (crop: string) => {
-    const schedules: { [key: string]: { season: string; months: string; nextPlanting: string; harvestTime: string } } = {
+    const now = new Date()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
+    
+    const getCurrentSeason = () => {
+      if (currentMonth >= 6 && currentMonth <= 9) return 'Monsoon (Kharif)'
+      if (currentMonth >= 10 || currentMonth <= 2) return 'Winter (Rabi)'
+      return 'Summer (Zaid)'
+    }
+    
+    const getNextPlantingDate = (plantingMonths: number[]) => {
+      for (const month of plantingMonths) {
+        const plantingDate = new Date(currentYear, month - 1, 15)
+        if (plantingDate > now) {
+          return plantingDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+        }
+      }
+      // If all dates passed, get next year's first planting date
+      const nextYearDate = new Date(currentYear + 1, plantingMonths[0] - 1, 15)
+      return nextYearDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    }
+    
+    const getHarvestDate = (plantingMonths: number[], growthMonths: number) => {
+      for (const month of plantingMonths) {
+        const plantingDate = new Date(currentYear, month - 1, 15)
+        if (plantingDate > now) {
+          const harvestDate = new Date(plantingDate)
+          harvestDate.setMonth(harvestDate.getMonth() + growthMonths)
+          return harvestDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+        }
+      }
+      // Next year calculation
+      const nextYearPlanting = new Date(currentYear + 1, plantingMonths[0] - 1, 15)
+      const nextYearHarvest = new Date(nextYearPlanting)
+      nextYearHarvest.setMonth(nextYearHarvest.getMonth() + growthMonths)
+      return nextYearHarvest.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    }
+    
+    const schedules: { [key: string]: { season: string; months: string; nextPlanting: string; harvestTime: string; currentSeason: string; bestSeason: string } } = {
       rice: { 
         season: 'Kharif & Rabi', 
         months: 'June-July (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
+        nextPlanting: getNextPlantingDate([6, 11]),
+        harvestTime: getHarvestDate([6, 11], 4),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Monsoon (Kharif) - High rainfall ideal'
       },
       wheat: { 
         season: 'Rabi', 
         months: 'October-December', 
-        nextPlanting: 'October 2024 (Post-monsoon)',
-        harvestTime: '4-5 months after planting'
+        nextPlanting: getNextPlantingDate([10, 11, 12]),
+        harvestTime: getHarvestDate([10, 11, 12], 5),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Winter (Rabi) - Cool weather preferred'
       },
       corn: { 
         season: 'Kharif & Rabi', 
         months: 'June-July (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
+        nextPlanting: getNextPlantingDate([6, 11]),
+        harvestTime: getHarvestDate([6, 11], 3),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Monsoon (Kharif) - Warm & wet conditions'
       },
       cotton: { 
         season: 'Kharif', 
         months: 'April-June', 
-        nextPlanting: 'April 2024 (Pre-monsoon)',
-        harvestTime: '5-6 months after planting'
+        nextPlanting: getNextPlantingDate([4, 5, 6]),
+        harvestTime: getHarvestDate([4, 5, 6], 6),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Summer to Monsoon - Long growing period'
       },
       sugarcane: { 
         season: 'Year-round', 
         months: 'February-April (Spring) | Oct-Nov (Autumn)', 
-        nextPlanting: 'February 2024 (Spring planting)',
-        harvestTime: '10-12 months after planting'
+        nextPlanting: getNextPlantingDate([2, 3, 4, 10, 11]),
+        harvestTime: getHarvestDate([2, 3, 4, 10, 11], 12),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Spring planting - 12-month crop cycle'
       },
       soybean: { 
         season: 'Kharif', 
         months: 'June-July', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
+        nextPlanting: getNextPlantingDate([6, 7]),
+        harvestTime: getHarvestDate([6, 7], 4),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Monsoon (Kharif) - Adequate rainfall needed'
       },
       potato: { 
         season: 'Rabi', 
         months: 'October-December', 
-        nextPlanting: 'October 2024 (Post-monsoon)',
-        harvestTime: '2-3 months after planting'
+        nextPlanting: getNextPlantingDate([10, 11, 12]),
+        harvestTime: getHarvestDate([10, 11, 12], 3),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Winter (Rabi) - Cool weather essential'
       },
       tomato: { 
         season: 'Year-round', 
         months: 'July-Aug (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'July 2024 (Monsoon season)',
-        harvestTime: '2-3 months after planting'
+        nextPlanting: getNextPlantingDate([7, 8, 11, 12]),
+        harvestTime: getHarvestDate([7, 8, 11, 12], 3),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Winter (Rabi) - Better fruit quality'
       },
       onion: { 
         season: 'Rabi', 
         months: 'November-January', 
-        nextPlanting: 'November 2024 (Post-monsoon)',
-        harvestTime: '4-5 months after planting'
+        nextPlanting: getNextPlantingDate([11, 12, 1]),
+        harvestTime: getHarvestDate([11, 12, 1], 5),
+        currentSeason: getCurrentSeason(),
+        bestSeason: 'Winter (Rabi) - Long day variety'
       }
     }
     return schedules[crop] || { 
       season: 'Seasonal', 
       months: 'Consult local agricultural officer', 
       nextPlanting: 'Check with local experts',
-      harvestTime: 'Varies by crop variety'
+      harvestTime: 'Varies by crop variety',
+      currentSeason: getCurrentSeason(),
+      bestSeason: 'Depends on crop variety'
     }
   }
 
@@ -218,6 +298,7 @@ export default function Dashboard() {
               <Link href="/about" className="hover:text-yellow-200">{t('about')}</Link>
               <Link href="/contact" className="hover:text-yellow-200">{t('helplines')}</Link>
               <Link href="/news" className="hover:text-yellow-200">{t('news')}</Link>
+              <Link href="/crop-advisory" className="hover:text-yellow-200">Crop Advisory</Link>
               <Link href="/dashboard" className="hover:text-yellow-200 font-semibold">{t('dashboard')}</Link>
             </div>
             <LanguageSwitcher />
@@ -251,6 +332,45 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+
+      {/* Warning Popup */}
+      {showWarningPopup && cropWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`bg-white rounded-lg p-6 max-w-md mx-4 border-l-4 ${
+            cropWarning.severity === 'high' ? 'border-red-500' : 'border-yellow-500'
+          }`}>
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">
+                {cropWarning.severity === 'high' ? '🚨' : '⚠️'}
+              </span>
+              <h3 className={`text-lg font-semibold ${
+                cropWarning.severity === 'high' ? 'text-red-800' : 'text-yellow-800'
+              }`}>
+                {cropWarning.severity === 'high' ? 'High Risk Warning' : 'Caution'}
+              </h3>
+            </div>
+            <p className={`text-sm mb-4 ${
+              cropWarning.severity === 'high' ? 'text-red-700' : 'text-yellow-700'
+            }`}>
+              {cropWarning.message}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowWarningPopup(false)}
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                I Understand
+              </button>
+              <Link
+                href="/crop-setup"
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
+              >
+                Change Crop
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="container mx-auto p-6">
         <div 
@@ -302,18 +422,56 @@ export default function Dashboard() {
           className="mt-6 bg-white p-6 rounded-lg shadow"
         >
           <h3 className="text-xl font-semibold mb-4">📅 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Schedule for {farmData.state || 'Your Region'}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">Best Planting Time</h4>
-              <p className="text-sm text-green-700 mb-1"><strong>Season:</strong> {getPlantingSchedule(farmData.crop).season}</p>
-              <p className="text-sm text-green-700 mb-1"><strong>Months:</strong> {getPlantingSchedule(farmData.crop).months}</p>
-              <p className="text-sm text-green-700"><strong>Next Planting:</strong> {getPlantingSchedule(farmData.crop).nextPlanting}</p>
-              <p className="text-xs text-green-600 mt-1">Optimized for {farmData.state || 'your region'}</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                🌤️ Current Season
+              </h4>
+              <p className="text-lg font-bold text-blue-700">{getPlantingSchedule(farmData.crop).currentSeason}</p>
+              <p className="text-xs text-blue-600 mt-1">Based on current date: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Harvest Timeline</h4>
-              <p className="text-sm text-blue-700 mb-2"><strong>Harvest Time:</strong> {getPlantingSchedule(farmData.crop).harvestTime}</p>
-              <p className="text-xs text-blue-600">Estimated yield: {(parseFloat(getCropYield(farmData.crop, farmData.state, farmData.district)) * parseFloat(farmData.farmSize)).toFixed(1)} tons from {farmData.farmSize} acres</p>
+            
+            <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                ⭐ Best Season
+              </h4>
+              <p className="text-sm font-medium text-green-700">{getPlantingSchedule(farmData.crop).bestSeason}</p>
+              <p className="text-xs text-green-600 mt-1">Optimal growing conditions for {farmData.crop}</p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                📍 Location
+              </h4>
+              <p className="text-sm font-medium text-purple-700">{farmData.state || 'Your Region'}</p>
+              <p className="text-xs text-purple-600 mt-1">{farmData.district || 'District'} - {farmData.farmSize} acres</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+              <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                🌱 Next Planting Date
+              </h4>
+              <div className="bg-white p-3 rounded-md mb-2">
+                <p className="text-lg font-bold text-green-700">{getPlantingSchedule(farmData.crop).nextPlanting}</p>
+              </div>
+              <p className="text-sm text-green-700 mb-1"><strong>Season:</strong> {getPlantingSchedule(farmData.crop).season}</p>
+              <p className="text-sm text-green-700 mb-1"><strong>Ideal Months:</strong> {getPlantingSchedule(farmData.crop).months}</p>
+              <p className="text-xs text-green-600 mt-2">📍 Calculated for {farmData.state || 'your region'} climate</p>
+            </div>
+            
+            <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+              <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                🌾 Expected Harvest Date
+              </h4>
+              <div className="bg-white p-3 rounded-md mb-2">
+                <p className="text-lg font-bold text-blue-700">{getPlantingSchedule(farmData.crop).harvestTime}</p>
+              </div>
+              <p className="text-sm text-blue-700 mb-1"><strong>Expected Yield:</strong> {(parseFloat(getCropYield(farmData.crop, farmData.state, farmData.district)) * parseFloat(farmData.farmSize)).toFixed(1)} tons</p>
+              <p className="text-sm text-blue-700 mb-1"><strong>Per Acre:</strong> {getCropYield(farmData.crop, farmData.state, farmData.district)} tons/acre</p>
+              <p className="text-xs text-blue-600 mt-2">📊 Based on {farmData.farmSize} acres in {farmData.district || farmData.state}</p>
             </div>
           </div>
         </div>

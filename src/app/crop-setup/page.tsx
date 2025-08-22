@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { LocationService } from '@/lib/locationService'
+import { validateCropLocation } from '@/lib/cropLocationValidator'
 
 interface LocationData {
   Name: string;
@@ -27,6 +28,7 @@ export default function CropSetupPage() {
   const [locationLoading, setLocationLoading] = useState(false)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null)
+  const [cropWarning, setCropWarning] = useState<{isWarning: boolean, message: string, severity: string} | null>(null)
   
   const router = useRouter()
   const { t } = useLanguage()
@@ -449,21 +451,25 @@ export default function CropSetupPage() {
     'Tughlakabad, Delhi', 'Badarpur, Delhi', 'Faridabad Border, Delhi', 'Surajkund, Delhi', 'Aravalli Hills, Delhi'
   ]
 
-  const handleSmartLocationSearch = async () => {
-    if (!searchTerm.trim()) return;
+  const handleSmartLocationSearch = async (term?: string) => {
+    const searchValue = term || searchTerm;
+    if (!searchValue.trim()) {
+      setLocationResults([]);
+      return;
+    }
     
     setLocationLoading(true);
     try {
       let data: LocationData[] = [];
       
       // Auto-detect if input is pincode (6 digits) or city/area name
-      const isPincode = /^\d{6}$/.test(searchTerm.trim());
+      const isPincode = /^\d{6}$/.test(searchValue.trim());
       
       if (isPincode) {
-        data = await LocationService.searchByPincode(searchTerm.trim());
+        data = await LocationService.searchByPincode(searchValue.trim());
         setSearchType('pincode');
       } else {
-        data = await LocationService.searchByPostOffice(searchTerm.trim());
+        data = await LocationService.searchByPostOffice(searchValue.trim());
         setSearchType('postoffice');
       }
       
@@ -626,6 +632,11 @@ export default function CropSetupPage() {
         postOffice: location.Name
       }));
     }
+    // Validate crop-location compatibility if crop is already selected
+    if (crop) {
+      const validation = validateCropLocation(crop, location.State)
+      setCropWarning(validation)
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -634,6 +645,12 @@ export default function CropSetupPage() {
     if (!selectedLocation) {
       alert('Please select a location first.');
       return;
+    }
+    
+    // Show warning popup if crop is unsuitable
+    if (cropWarning && cropWarning.isWarning && cropWarning.severity === 'high') {
+      const proceed = confirm(`⚠️ WARNING: ${cropWarning.message}\n\nDo you still want to proceed to the dashboard?`);
+      if (!proceed) return;
     }
     
     if (typeof window !== 'undefined') {
@@ -646,6 +663,11 @@ export default function CropSetupPage() {
         state: selectedLocation.State,
         postOffice: selectedLocation.Name
       }));
+      
+      // Store warning for dashboard display
+      if (cropWarning) {
+        localStorage.setItem('cropWarning', JSON.stringify(cropWarning));
+      }
     }
     
     router.push('/dashboard')
@@ -685,6 +707,7 @@ export default function CropSetupPage() {
               <a href="/about" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('about')}</a>
               <a href="/contact" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('helplines')}</a>
               <a href="/news" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('news')}</a>
+              <a href="/crop-advisory" className="hover:opacity-80" style={{color: '#ffffff'}}>Crop Advisory</a>
             </div>
             <LanguageSwitcher />
           </div>
@@ -708,7 +731,14 @@ export default function CropSetupPage() {
                 <input
                   type="text"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    if (e.target.value.length >= 3) {
+                      handleSmartLocationSearch(e.target.value);
+                    } else {
+                      setLocationResults([]);
+                    }
+                  }}
                   placeholder={t('locationPlaceholder')}
                   className="flex-1 px-3 py-2 border rounded-md text-sm"
                 />
@@ -795,6 +825,11 @@ export default function CropSetupPage() {
                           setCrop(cropName.toLowerCase())
                           setCropSearch('')
                           setShowCropList(false)
+                          // Validate crop-location compatibility if location is already selected
+                          if (selectedLocation) {
+                            const validation = validateCropLocation(cropName.toLowerCase(), selectedLocation.State)
+                            setCropWarning(validation)
+                          }
                         }}
                         className="p-3 hover:bg-green-100 cursor-pointer border-b border-green-100 last:border-b-0"
                       >
@@ -807,8 +842,103 @@ export default function CropSetupPage() {
                 </div>
               )}
               {crop && (
-                <div className="mt-2 text-sm text-green-700 font-medium">
-                  Selected: {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                <div className="mt-3 p-3 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-gray-600">Selected Crop:</span>
+                  </div>
+                  <div className="mt-1 text-lg font-bold text-green-700 capitalize">
+                    🌾 {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                  </div>
+                  
+                  {selectedLocation && (() => {
+                    const getCropSuitability = (cropName: string, state: string) => {
+                      const c = cropName.toLowerCase();
+                      const s = state.toLowerCase();
+                      
+                      // Rice suitability
+                      if (c === 'rice') {
+                        if (['west bengal', 'odisha', 'andhra pradesh', 'telangana', 'tamil nadu', 'kerala', 'assam'].includes(s)) {
+                          return { good: true, reason: 'High rainfall, fertile alluvial soil, and warm climate perfect for rice cultivation' };
+                        }
+                        if (['rajasthan', 'gujarat', 'haryana'].includes(s)) {
+                          return { good: false, reason: 'Low rainfall and arid climate. Requires 3x more irrigation than available' };
+                        }
+                      }
+                      
+                      // Wheat suitability
+                      if (c === 'wheat') {
+                        if (['punjab', 'haryana', 'uttar pradesh', 'madhya pradesh', 'rajasthan'].includes(s)) {
+                          return { good: true, reason: 'Cool winters, fertile soil, and good irrigation facilities ideal for wheat' };
+                        }
+                        if (['kerala', 'tamil nadu', 'goa'].includes(s)) {
+                          return { good: false, reason: 'Too hot and humid. Wheat needs cool weather during growing season' };
+                        }
+                      }
+                      
+                      // Cotton suitability
+                      if (c === 'cotton') {
+                        if (['gujarat', 'maharashtra', 'andhra pradesh', 'telangana', 'karnataka'].includes(s)) {
+                          return { good: true, reason: 'Black cotton soil, moderate rainfall, and warm climate perfect for cotton' };
+                        }
+                        if (['himachal pradesh', 'uttarakhand', 'jammu and kashmir'].includes(s)) {
+                          return { good: false, reason: 'Too cold. Cotton needs warm temperature throughout growing period' };
+                        }
+                      }
+                      
+                      // Sugarcane suitability
+                      if (c === 'sugarcane') {
+                        if (['uttar pradesh', 'maharashtra', 'karnataka', 'tamil nadu', 'andhra pradesh'].includes(s)) {
+                          return { good: true, reason: 'High water availability, fertile soil, and tropical climate ideal for sugarcane' };
+                        }
+                        if (['rajasthan', 'gujarat', 'haryana'].includes(s)) {
+                          return { good: false, reason: 'Water-intensive crop. Requires 5x more water than available in arid regions' };
+                        }
+                      }
+                      
+                      // Default for other crops
+                      return { good: true, reason: 'Generally suitable for cultivation in this region' };
+                    };
+                    
+                    const suitability = getCropSuitability(crop, selectedLocation.State);
+                    
+                    return (
+                      <div className={`mt-2 p-2 rounded-md text-xs ${
+                        suitability.good 
+                          ? 'bg-green-100 text-green-800 border border-green-200' 
+                          : 'bg-red-100 text-red-800 border border-red-200'
+                      }`}>
+                        <div className="font-medium flex items-center gap-1">
+                          {suitability.good ? '✅ Good Choice' : '⚠️ Not Recommended'} for {selectedLocation.State}
+                        </div>
+                        <div className="mt-1">{suitability.reason}</div>
+                      </div>
+                    );
+                  })()}
+                  
+                  <div className="mt-2 text-xs text-gray-500">
+                    Ready for yield prediction and farming insights
+                  </div>
+                </div>
+              )}
+              
+              {/* Crop Warning Display */}
+              {cropWarning && cropWarning.isWarning && (
+                <div className={`mt-3 p-3 rounded-lg border-l-4 ${
+                  cropWarning.severity === 'high' 
+                    ? 'bg-red-50 border-red-500 text-red-800' 
+                    : 'bg-yellow-50 border-yellow-500 text-yellow-800'
+                }`}>
+                  <div className="text-sm font-medium">
+                    {cropWarning.severity === 'high' ? '🚨 High Risk Warning' : '⚠️ Caution'}
+                  </div>
+                  <div className="text-sm mt-1">{cropWarning.message}</div>
+                </div>
+              )}
+              
+              {cropWarning && !cropWarning.isWarning && (
+                <div className="mt-3 p-3 bg-green-50 border-l-4 border-green-500 text-green-800 rounded-lg">
+                  <div className="text-sm">{cropWarning.message}</div>
                 </div>
               )}
             </div>

@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const { message, language, context } = await request.json()
-    console.log('API called with:', { message, language, context })
+    const sanitizedMessage = message.replace(/[\r\n]/g, ' ').substring(0, 500)
+    console.log('API called with message length:', sanitizedMessage.length)
     const response = await callServerAI(message, language, context)
-    console.log('AI response:', response)
+    console.log('AI response received')
     return NextResponse.json({ response })
   } catch (error) {
     console.error('API error:', error)

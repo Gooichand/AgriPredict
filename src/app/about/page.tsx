@@ -92,49 +92,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-3xl font-semibold text-green-700 mb-6">🤖 Technology Stack</h2>
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-700 mb-2">Frontend</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Next.js 14 & React</li>
-                      <li>• TypeScript</li>
-                      <li>• Tailwind CSS</li>
-                      <li>• React-Leaflet Maps</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-700 mb-2">AI & APIs</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Hugging Face Models</li>
-                      <li>• Computer Vision</li>
-                      <li>• OpenWeatherMap API</li>
-                      <li>• Market Data APIs</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div className="mb-8">
-              <h2 className="text-3xl font-semibold text-green-700 mb-6">📊 Data Sources</h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                <ul className="text-gray-700 space-y-2">
-                  <li>🇮🇳 Ministry of Agriculture & Farmers Welfare</li>
-                  <li>🌦️ India Meteorological Department (IMD)</li>
-                  <li>🏫 State Agricultural Universities</li>
-                  <li>📚 Agricultural Statistics Division</li>
-                </ul>
-                <ul className="text-gray-700 space-y-2">
-                  <li>🛰️ ISRO's RISAT & Cartosat satellites</li>
-                  <li>🤖 Hugging Face AI Models</li>
-                  <li>🌍 OpenWeatherMap APIs</li>
-                  <li>📈 Real-time market data</li>
-                </ul>
-              </div>
-            </div>
 
             <div className="text-center bg-green-100 p-6 rounded-lg">
               <h2 className="text-2xl font-semibold text-green-700 mb-4">🌍 Global Impact</h2>

@@ -59,14 +59,19 @@ export default function ChatBot() {
       if (typeof window !== 'undefined') {
         const farmData = localStorage.getItem('farmData')
         if (farmData) {
-          const parsed = JSON.parse(farmData)
-          farmContext = `User's farm: ${parsed.crop} crop, ${parsed.farmSize} acres, located in ${parsed.location}`
+          try {
+            const parsed = JSON.parse(farmData)
+            farmContext = `User's farm: ${parsed.crop} crop, ${parsed.farmSize} acres, located in ${parsed.location}`
+          } catch (error) {
+            console.warn('Invalid farm data in localStorage')
+            farmContext = ''
+          }
         }
       }
 
       // Try direct Gemini API call first (works without server restart)
       try {
-        const geminiKey = 'AIzaSyBmYCbl9o23oNiA_rzro1h6A0KKpl8l580'
+        const geminiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyBmYCbl9o23oNiA_rzro1h6A0KKpl8l580'
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

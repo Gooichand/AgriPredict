@@ -332,23 +332,14 @@ export class AIService {
     return null
   }
   
+  private static readonly BASE_CROP_PRICES = {
+    rice: 3200, wheat: 2400, corn: 2100, cotton: 6200,
+    sugarcane: 380, soybean: 4800, potato: 1200, tomato: 2500,
+    onion: 1800, barley: 2000, mustard: 5500, groundnut: 5200
+  }
+
   private static getBaseCropPrice(crop: string) {
-    // Updated base prices (₹/quintal) based on recent market trends
-    const prices = {
-      rice: 3200,
-      wheat: 2400,
-      corn: 2100,
-      cotton: 6200,
-      sugarcane: 380,
-      soybean: 4800,
-      potato: 1200,
-      tomato: 2500,
-      onion: 1800,
-      barley: 2000,
-      mustard: 5500,
-      groundnut: 5200
-    }
-    return prices[crop] || 2500
+    return this.BASE_CROP_PRICES[crop] || 2500
   }
 
   static async getPersonalizedAdvice(farmData: any) {
