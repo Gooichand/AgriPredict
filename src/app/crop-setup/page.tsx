@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { searchLocations, LocationData } from '@/lib/indianLocations'
 
 export default function CropSetupPage() {
   const [location, setLocation] = useState('')
@@ -435,9 +436,9 @@ export default function CropSetupPage() {
     'Tughlakabad, Delhi', 'Badarpur, Delhi', 'Faridabad Border, Delhi', 'Surajkund, Delhi', 'Aravalli Hills, Delhi'
   ]
 
-  const filteredLocations = worldLocations.filter(locationName => 
-    locationName.toLowerCase().includes(locationSearch.toLowerCase())
-  )
+  const filteredLocations = locationSearch.length >= 2 
+    ? searchLocations(locationSearch)
+    : []
 
   // Automatically get location on page load
   useEffect(() => {
@@ -555,7 +556,7 @@ export default function CropSetupPage() {
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={t('locationPlaceholder')}
+                    placeholder="Search by city, state, or pincode (e.g., Mumbai, Maharashtra, 400001)"
                     value={location || locationSearch}
                     onChange={(e) => {
                       setLocationSearch(e.target.value)
@@ -576,17 +577,18 @@ export default function CropSetupPage() {
                   {showLocationList && (
                     <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg">
                       {filteredLocations.length > 0 ? (
-                        filteredLocations.slice(0, 50).map((locationName) => (
+                        filteredLocations.map((locationData) => (
                           <div
-                            key={locationName}
+                            key={`${locationData.city}-${locationData.pincode}`}
                             onClick={() => {
-                              setLocation(locationName)
+                              setLocation(`${locationData.city}, ${locationData.state} - ${locationData.pincode}`)
                               setLocationSearch('')
                               setShowLocationList(false)
                             }}
                             className="p-3 hover:bg-green-100 cursor-pointer border-b border-green-100 last:border-b-0 text-sm"
                           >
-                            📍 {locationName}
+                            <div className="font-medium">📍 {locationData.city}, {locationData.state}</div>
+                            <div className="text-xs text-gray-500">PIN: {locationData.pincode}</div>
                           </div>
                         ))
                       ) : (

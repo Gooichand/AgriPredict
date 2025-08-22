@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { getSmartResponse } from '@/lib/farmingKnowledge'
+import { searchLocations, getLocationByPincode } from '@/lib/indianLocations'
 
 interface Message {
   id: string
@@ -52,6 +53,29 @@ export default function ChatBot() {
   }
 
   const generateBotResponse = async (userMessage: string): Promise<string> => {
+    // Check for pincode queries
+    const pincodeMatch = userMessage.match(/\b\d{6}\b/)
+    if (pincodeMatch) {
+      const location = getLocationByPincode(pincodeMatch[0])
+      if (location) {
+        return `📍 Location Found:\n\n🏡 City: ${location.city}\n🏞️ State: ${location.state}\n📮 PIN: ${location.pincode}${location.district ? `\n🏘️ District: ${location.district}` : ''}\n\nThis is a great agricultural region! I can help you with farming information for this area.`
+      }
+    }
+
+    // Check for location search
+    if (userMessage.toLowerCase().includes('location') || userMessage.toLowerCase().includes('city') || userMessage.toLowerCase().includes('pincode')) {
+      const locations = searchLocations(userMessage)
+      if (locations.length > 0) {
+        const topLocations = locations.slice(0, 5)
+        let response = '📍 Found these locations:\n\n'
+        topLocations.forEach(loc => {
+          response += `• ${loc.city}, ${loc.state} - ${loc.pincode}\n`
+        })
+        response += '\nI can provide farming information for any of these areas!'
+        return response
+      }
+    }
+
     // Try smart response from knowledge base first
     const smartResponse = getSmartResponse(userMessage, language)
     if (smartResponse) {
