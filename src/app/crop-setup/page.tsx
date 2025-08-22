@@ -441,10 +441,16 @@ export default function CropSetupPage() {
     ? searchLocations(locationSearch)
     : []
 
-  // Automatically get location on page load
+  // Load selected location from LocationSearch component
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      getDeviceLocation()
+      const savedLocation = localStorage.getItem('selectedLocation');
+      if (savedLocation) {
+        const locationData = JSON.parse(savedLocation);
+        setLocation(locationData.location);
+      } else {
+        getDeviceLocation();
+      }
     }
   }, [])
 
@@ -492,11 +498,18 @@ export default function CropSetupPage() {
     
     // Store data in localStorage
     if (typeof window !== 'undefined') {
+      const selectedLocationData = localStorage.getItem('selectedLocation');
+      const locationData = selectedLocationData ? JSON.parse(selectedLocationData) : null;
+      
       localStorage.setItem('farmData', JSON.stringify({
         location,
         crop,
-        farmSize
-      }))
+        farmSize,
+        pincode: locationData?.pincode || '',
+        district: locationData?.district || '',
+        state: locationData?.state || '',
+        postOffice: locationData?.postOffice || ''
+      }));
     }
     
     router.push('/dashboard')

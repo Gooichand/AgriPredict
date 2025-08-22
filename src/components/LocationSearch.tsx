@@ -18,6 +18,7 @@ export default function LocationSearch() {
   const [loading, setLoading] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -167,13 +168,49 @@ export default function LocationSearch() {
         </div>
       )}
 
+      {selectedLocation && (
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <h3 className="text-sm font-semibold text-green-800 mb-2">Selected Location:</h3>
+          <div className="text-green-700">
+            <div className="font-medium">{selectedLocation.Name}</div>
+            <div className="text-sm">{selectedLocation.District}, {selectedLocation.State} - {selectedLocation.Pincode}</div>
+          </div>
+        </div>
+      )}
+
       {results.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">Results ({results.length})</h3>
+          <h3 className="text-lg font-semibold mb-3">Results ({results.length}) - Click to select</h3>
           <div className="grid gap-3">
             {results.map((location, index) => (
-              <div key={index} className="p-3 border rounded-md bg-gray-50">
-                <div className="font-medium">{location.Name}</div>
+              <div 
+                key={index} 
+                onClick={() => {
+                  setSelectedLocation(location);
+                  setSearchTerm(location.Pincode);
+                  // Store in localStorage for the main form
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('selectedLocation', JSON.stringify({
+                      location: `${location.Name}, ${location.District}, ${location.State} - ${location.Pincode}`,
+                      pincode: location.Pincode,
+                      district: location.District,
+                      state: location.State,
+                      postOffice: location.Name
+                    }));
+                  }
+                }}
+                className={`p-3 border rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
+                  selectedLocation?.Pincode === location.Pincode 
+                    ? 'bg-green-100 border-green-500 shadow-md' 
+                    : 'bg-gray-50 hover:bg-blue-50'
+                }`}
+              >
+                <div className="font-medium flex items-center gap-2">
+                  {selectedLocation?.Pincode === location.Pincode && (
+                    <span className="text-green-600">✓</span>
+                  )}
+                  {location.Name}
+                </div>
                 <div className="text-sm text-gray-600">
                   {location.District}, {location.State} - {location.Pincode}
                 </div>
