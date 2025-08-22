@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { getSmartResponse } from '@/lib/farmingKnowledge'
-import { searchLocations, getLocationByPincode } from '@/lib/indianLocations'
+import { AIAgentService } from '@/lib/aiAgentService'
+import { VoiceService } from '@/lib/voiceService'
 
 interface Message {
   id: string
@@ -12,11 +12,22 @@ interface Message {
   timestamp: Date
 }
 
+interface FarmContext {
+  crop?: string
+  location?: string
+  farmSize?: string
+  state?: string
+  district?: string
+}
+
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const [voiceSupported, setVoiceSupported] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { t, language } = useLanguage()
 
@@ -27,6 +38,21 @@ export default function ChatBot() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  useEffect(() => {
+    // Initialize voice service
+    const initVoice = async () => {
+      const supported = VoiceService.initialize()
+      setVoiceSupported(supported)
+      
+      if (supported) {
+        // Request microphone permission on first load
+        await VoiceService.requestMicrophonePermission()
+      }
+    }
+    
+    initVoice()
+  }, [])
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -55,71 +81,27 @@ export default function ChatBot() {
   const generateBotResponse = async (userMessage: string): Promise<string> => {
     try {
       // Get farm data for context
-      let farmContext = ''
+      let farmContext: FarmContext = {}
       if (typeof window !== 'undefined') {
         const farmData = localStorage.getItem('farmData')
         if (farmData) {
           const parsed = JSON.parse(farmData)
-          farmContext = `User's farm: ${parsed.crop} crop, ${parsed.farmSize} acres, located in ${parsed.location}`
-        }
-      }
-
-      // Try direct Gemini API call first (works without server restart)
-      try {
-        const geminiKey = 'AIzaSyBmYCbl9o23oNiA_rzro1h6A0KKpl8l580'
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `You are KisanSafe AI, a friendly and expert agricultural advisor for Indian farmers. ${farmContext ? `Context: ${farmContext}.` : ''} 
-
-Respond in ${language === 'hi' ? 'Hindi' : 'English'} language. Be helpful, practical, and encouraging. Provide specific, actionable farming advice. Keep responses concise but informative (2-4 sentences). Use emojis appropriately.
-
-User question: ${userMessage}`
-              }]
-            }]
-          })
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text
-          if (aiResponse) {
-            return aiResponse.trim()
+          farmContext = {
+            crop: parsed.crop,
+            location: parsed.location,
+            farmSize: parsed.farmSize,
+            state: parsed.state,
+            district: parsed.district
           }
         }
-      } catch (directError) {
-        console.log('Direct Gemini call failed:', directError)
       }
 
-      // Fallback to server API
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage,
-          language: language,
-          context: farmContext
-        })
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        if (data.response) {
-          return data.response
-        }
-      }
-      
-      throw new Error('All AI services failed')
+      // Use the new AI Agent Service
+      const response = await AIAgentService.generateResponse(userMessage, language, farmContext)
+      return response
       
     } catch (error) {
-      console.error('AI Error:', error)
-      
-      // Enhanced fallback responses
+      console.error('AI Agent Error:', error)
       return getEnhancedFallback(userMessage, language)
     }
   }
@@ -141,12 +123,13 @@ User question: ${userMessage}`
       : "🤖 I'm ready to answer your farming questions! You can ask me about:\n\n• Crop care and yield improvement\n• Fertilizers, irrigation, and soil health\n• Disease and pest management\n• Market prices and selling strategies\n• Government schemes and subsidies\n• Weather alerts and farming calendar\n\nPlease ask me a specific question for detailed guidance!"
   }
 
-  const handleSendMessage = async () => {
-    if (!inputText.trim()) return
+  const handleSendMessage = async (messageText?: string) => {
+    const textToSend = messageText || inputText
+    if (!textToSend.trim()) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputText,
+      text: textToSend,
       isBot: false,
       timestamp: new Date()
     }
@@ -155,31 +138,86 @@ User question: ${userMessage}`
     setInputText('')
     setIsTyping(true)
 
-    // Get AI response with longer delay for better UX
-    setTimeout(async () => {
-      try {
-        const botResponse = await generateBotResponse(inputText)
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: botResponse,
-          isBot: true,
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, botMessage])
-      } catch (error) {
-        const errorMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: language === 'hi' 
-            ? "क्षमा करें, मुझे कुछ तकनीकी समस्या हो रही है। कृपया फिर से कोशिश करें।"
-            : "Sorry, I'm experiencing some technical issues. Please try again.",
-          isBot: true,
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, errorMessage])
-      } finally {
-        setIsTyping(false)
+    try {
+      const botResponse = await generateBotResponse(textToSend)
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: botResponse,
+        isBot: true,
+        timestamp: new Date()
       }
-    }, 1500)
+      setMessages(prev => [...prev, botMessage])
+      
+      // Auto-speak response if voice is supported and enabled
+      if (voiceSupported && !VoiceService.isCurrentlySpeaking()) {
+        setTimeout(() => {
+          VoiceService.speak(
+            botResponse,
+            language,
+            () => setIsSpeaking(true),
+            () => setIsSpeaking(false),
+            (error) => console.error('Speech error:', error)
+          )
+        }, 500)
+      }
+      
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: language === 'hi' 
+          ? "क्षमा करें, मुझे कुछ तकनीकी समस्या हो रही है। कृपया फिर से कोशिश करें।"
+          : language === 'te'
+          ? "క్షమించండి, నాకు కొన్ని సాంకేతిక సమస్యలు ఉన్నాయి. దయచేసి మళ్లీ ప్రయత్నించండి."
+          : "Sorry, I'm experiencing some technical issues. Please try again.",
+        isBot: true,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsTyping(false)
+    }
+  }
+
+  const handleVoiceInput = async () => {
+    if (!voiceSupported) {
+      alert(language === 'hi' ? 'आवाज़ सुविधा उपलब्ध नहीं है' : 'Voice feature not available')
+      return
+    }
+
+    if (isListening) {
+      VoiceService.stopListening()
+      setIsListening(false)
+      return
+    }
+
+    try {
+      await VoiceService.startListening(
+        language,
+        (transcript) => {
+          setInputText(transcript)
+          setIsListening(false)
+          // Auto-send the voice message
+          setTimeout(() => handleSendMessage(transcript), 500)
+        },
+        (error) => {
+          console.error('Voice error:', error)
+          setIsListening(false)
+          alert(error)
+        },
+        () => setIsListening(true),
+        () => setIsListening(false)
+      )
+    } catch (error) {
+      console.error('Voice input error:', error)
+      setIsListening(false)
+    }
+  }
+
+  const toggleSpeech = () => {
+    if (isSpeaking) {
+      VoiceService.stopSpeaking()
+      setIsSpeaking(false)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -214,12 +252,25 @@ User question: ${userMessage}`
             <p className="text-xs opacity-90">Farming Assistant</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="text-white hover:bg-green-700 p-1 rounded"
-        >
-          ✕
-        </button>
+        <div className="flex items-center gap-2">
+          {voiceSupported && (
+            <div className="text-xs opacity-75">
+              🎤 Voice
+            </div>
+          )}
+          <button
+            onClick={() => {
+              setIsOpen(false)
+              VoiceService.stopListening()
+              VoiceService.stopSpeaking()
+              setIsListening(false)
+              setIsSpeaking(false)
+            }}
+            className="text-white hover:bg-green-700 p-1 rounded"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -264,28 +315,44 @@ User question: ${userMessage}`
           <p className="text-xs text-gray-500 mb-2">{language === 'hi' ? 'तुरंत पूछें:' : 'Quick Ask:'}</p>
           <div className="grid grid-cols-2 gap-2 mb-3">
             <button
-              onClick={() => setInputText(language === 'hi' ? 'धान की खेती कैसे करें?' : 'How to grow rice?')}
+              onClick={() => setInputText(
+                language === 'hi' ? 'धान की खेती कैसे करें?' : 
+                language === 'te' ? 'వరి సాగు ఎలా చేయాలి?' : 
+                'How to grow rice?'
+              )}
               className="text-xs bg-green-50 hover:bg-green-100 text-green-700 p-2 rounded border"
             >
-              🌾 {language === 'hi' ? 'धान' : 'Rice'}
+              🌾 {language === 'hi' ? 'धान' : language === 'te' ? 'వరి' : 'Rice'}
             </button>
             <button
-              onClick={() => setInputText(language === 'hi' ? 'आज के भाव बताएं' : 'Today market prices')}
+              onClick={() => setInputText(
+                language === 'hi' ? 'आज के भाव बताएं' : 
+                language === 'te' ? 'నేటి మార్కెట్ ధరలు' : 
+                'Today market prices'
+              )}
               className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 p-2 rounded border"
             >
-              💰 {language === 'hi' ? 'भाव' : 'Prices'}
+              💰 {language === 'hi' ? 'भाव' : language === 'te' ? 'ధరలు' : 'Prices'}
             </button>
             <button
-              onClick={() => setInputText(language === 'hi' ? 'मौसम की जानकारी' : 'Weather updates')}
+              onClick={() => setInputText(
+                language === 'hi' ? 'मौसम की जानकारी' : 
+                language === 'te' ? 'వాతావరణ సమాచారం' : 
+                'Weather updates'
+              )}
               className="text-xs bg-yellow-50 hover:bg-yellow-100 text-yellow-700 p-2 rounded border"
             >
-              🌦️ {language === 'hi' ? 'मौसम' : 'Weather'}
+              🌦️ {language === 'hi' ? 'मौसम' : language === 'te' ? 'వాతావరణం' : 'Weather'}
             </button>
             <button
-              onClick={() => setInputText(language === 'hi' ? 'सरकारी योजनाएं' : 'Government schemes')}
+              onClick={() => setInputText(
+                language === 'hi' ? 'सरकारी योजनाएं' : 
+                language === 'te' ? 'ప్రభుత్వ పథకాలు' : 
+                'Government schemes'
+              )}
               className="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 p-2 rounded border"
             >
-              🏛️ {language === 'hi' ? 'योजना' : 'Schemes'}
+              🏛️ {language === 'hi' ? 'योजना' : language === 'te' ? 'పథకాలు' : 'Schemes'}
             </button>
           </div>
         </div>
@@ -299,17 +366,64 @@ User question: ${userMessage}`
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={language === 'hi' ? 'अपना सवाल पूछें...' : 'Ask your farming question...'}
+            placeholder={language === 'hi' ? 'अपना सवाल पूछें...' : language === 'te' ? 'మీ ప్రశ్న అడగండి...' : 'Ask your farming question...'}
             className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
           />
+          
+          {/* Voice Input Button */}
+          {voiceSupported && (
+            <button
+              onClick={handleVoiceInput}
+              disabled={isTyping}
+              className={`p-2 rounded-lg transition-colors ${
+                isListening 
+                  ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse' 
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
+              title={isListening ? 'Stop listening' : 'Voice input'}
+            >
+              <span className="text-sm">{isListening ? '🔴' : '🎤'}</span>
+            </button>
+          )}
+          
+          {/* Speech Toggle Button */}
+          {isSpeaking && (
+            <button
+              onClick={toggleSpeech}
+              className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition-colors"
+              title="Stop speaking"
+            >
+              <span className="text-sm">🔇</span>
+            </button>
+          )}
+          
           <button
-            onClick={handleSendMessage}
+            onClick={() => handleSendMessage()}
             disabled={!inputText.trim() || isTyping}
             className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white p-2 rounded-lg transition-colors"
           >
             <span className="text-sm">📤</span>
           </button>
         </div>
+        
+        {/* Voice Status */}
+        {isListening && (
+          <div className="mt-2 text-center">
+            <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              {language === 'hi' ? 'सुन रहा हूं...' : language === 'te' ? 'వింటున్నాను...' : 'Listening...'}
+            </div>
+          </div>
+        )}
+        
+        {isSpeaking && (
+          <div className="mt-2 text-center">
+            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs">
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce"></div>
+              {language === 'hi' ? 'बोल रहा हूं...' : language === 'te' ? 'మాట్లాడుతున్నాను...' : 'Speaking...'}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

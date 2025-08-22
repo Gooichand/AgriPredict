@@ -5,6 +5,7 @@ import YieldChart from './YieldChart'
 import AlertMap from './AlertMap'
 import AIRecommendations from './AIRecommendations'
 import CropHealthAnalysis from './CropHealthAnalysis'
+import ChatBot from './ChatBot'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -503,6 +504,9 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      
+      {/* Enhanced AI Chatbot */}
+      <ChatBot />
     </div>
   )
 }
