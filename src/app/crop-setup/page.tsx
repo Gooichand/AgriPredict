@@ -253,6 +253,11 @@ export default function CropSetupPage() {
       <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg relative z-10">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center gap-2">🌾 KISAN SAFE 🚜</h1>
+          <div className="flex gap-6">
+            <a href="/crop-setup" className="hover:text-yellow-200 font-semibold">Home</a>
+            <a href="/about" className="hover:text-yellow-200">About</a>
+            <a href="/contact" className="hover:text-yellow-200">Contact</a>
+          </div>
         </div>
       </nav>
 

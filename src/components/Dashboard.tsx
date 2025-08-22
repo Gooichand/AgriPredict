@@ -134,12 +134,17 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-green-600 text-white p-4">
+      <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">KisanSafe Dashboard</h1>
-          <Link href="/" className="bg-white text-green-600 px-4 py-2 rounded hover:bg-gray-100">
-            Home
+          <Link href="/crop-setup" className="text-2xl font-bold flex items-center gap-2">
+            🌾 KISAN SAFE 🚜
           </Link>
+          <div className="flex gap-6">
+            <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
+            <Link href="/about" className="hover:text-yellow-200">About</Link>
+            <Link href="/contact" className="hover:text-yellow-200">Contact</Link>
+            <Link href="/dashboard" className="hover:text-yellow-200 font-semibold">Dashboard</Link>
+          </div>
         </div>
       </nav>
 
