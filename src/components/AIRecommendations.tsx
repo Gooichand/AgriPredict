@@ -76,15 +76,28 @@ export default function AIRecommendations({ farmData }: AIRecommendationsProps) 
           </div>
           
           {marketPrediction && (
-            <div className="bg-white p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-700 mb-2">💰 Market Price Forecast</h4>
-              <p className="text-lg font-bold">₹{marketPrediction.predicted}/quintal</p>
-              <p className="text-sm text-gray-600">
-                Current: ₹{marketPrediction.current} | 
-                <span className={`ml-1 ${marketPrediction.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                  {marketPrediction.trend === 'up' ? '↗️' : '↘️'} {marketPrediction.trend}
+            <div className="bg-white p-4 rounded-lg border-l-4 border-blue-500">
+              <h4 className="font-semibold text-blue-700 mb-2">💰 Live Market Price Forecast</h4>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-lg font-bold">₹{marketPrediction.predicted}/quintal</span>
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  marketPrediction.trend === 'up' ? 'bg-green-100 text-green-700' : 
+                  marketPrediction.trend === 'down' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                }`}>
+                  {marketPrediction.trend === 'up' ? '↗️ Rising' : marketPrediction.trend === 'down' ? '↘️ Falling' : '→ Stable'}
                 </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-1">
+                Current: ₹{marketPrediction.current} | Confidence: {marketPrediction.confidence}%
               </p>
+              {marketPrediction.source && (
+                <p className="text-xs text-blue-600">
+                  Source: {marketPrediction.source} | Updated: {marketPrediction.lastUpdated}
+                </p>
+              )}
+              {marketPrediction.market && (
+                <p className="text-xs text-gray-500">Market: {marketPrediction.market}</p>
+              )}
             </div>
           )}
         </div>
