@@ -16,6 +16,8 @@ export default function LocationSearch() {
   const [searchType, setSearchType] = useState<'pincode' | 'postoffice'>('pincode');
   const [results, setResults] = useState<LocationData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [detectedLocation, setDetectedLocation] = useState('');
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -35,6 +37,41 @@ export default function LocationSearch() {
       console.error('Search error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getDeviceLocation = async () => {
+    setIsGettingLocation(true);
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          
+          try {
+            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+            const data = await response.json();
+            
+            if (data.postcode) {
+              setSearchTerm(data.postcode);
+              setSearchType('pincode');
+              setDetectedLocation(`${data.locality || data.city}, ${data.principalSubdivision}`);
+              // Auto search with detected pincode
+              const pincodeData = await LocationService.searchByPincode(data.postcode);
+              setResults(pincodeData);
+            }
+          } catch (error) {
+            console.error('Location detection failed:', error);
+          }
+          setIsGettingLocation(false);
+        },
+        (error) => {
+          console.log('Location access denied:', error);
+          setIsGettingLocation(false);
+        }
+      );
+    } else {
+      setIsGettingLocation(false);
     }
   };
 
@@ -67,7 +104,23 @@ export default function LocationSearch() {
         >
           {loading ? 'Searching...' : 'Search'}
         </button>
+        
+        <button
+          onClick={getDeviceLocation}
+          disabled={isGettingLocation}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+        >
+          {isGettingLocation ? 'Detecting...' : '📍 Auto-Detect'}
+        </button>
       </div>
+
+      {detectedLocation && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <div className="text-sm text-blue-800">
+            📍 Detected Location: {detectedLocation}
+          </div>
+        </div>
+      )}
 
       {results.length > 0 && (
         <div className="mt-6">
