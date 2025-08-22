@@ -4,18 +4,30 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
-import { searchLocations, LocationData } from '@/lib/indianLocations'
-import LocationSearch from '@/components/LocationSearch'
+import { LocationService } from '@/lib/locationService'
+
+interface LocationData {
+  Name: string;
+  District: string;
+  State: string;
+  Pincode: string;
+  Block: string;
+}
 
 export default function CropSetupPage() {
-  const [location, setLocation] = useState('')
   const [crop, setCrop] = useState('')
   const [farmSize, setFarmSize] = useState('')
-  const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [cropSearch, setCropSearch] = useState('')
   const [showCropList, setShowCropList] = useState(false)
-  const [locationSearch, setLocationSearch] = useState('')
-  const [showLocationList, setShowLocationList] = useState(false)
+  
+  // Location search states
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchType, setSearchType] = useState<'pincode' | 'postoffice'>('pincode')
+  const [locationResults, setLocationResults] = useState<LocationData[]>([])
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [isGettingLocation, setIsGettingLocation] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null)
+  
   const router = useRouter()
   const { t } = useLanguage()
 
@@ -437,89 +449,122 @@ export default function CropSetupPage() {
     'Tughlakabad, Delhi', 'Badarpur, Delhi', 'Faridabad Border, Delhi', 'Surajkund, Delhi', 'Aravalli Hills, Delhi'
   ]
 
-  const filteredLocations = locationSearch.length >= 2 
-    ? searchLocations(locationSearch)
-    : []
+  const handleLocationSearch = async () => {
+    if (!searchTerm.trim()) return;
+    
+    setLocationLoading(true);
+    try {
+      let data: LocationData[] = [];
+      
+      if (searchType === 'pincode') {
+        data = await LocationService.searchByPincode(searchTerm);
+      } else {
+        data = await LocationService.searchByPostOffice(searchTerm);
+      }
+      
+      setLocationResults(data);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setLocationLoading(false);
+    }
+  };
 
-  // Load selected location from LocationSearch component
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedLocation = localStorage.getItem('selectedLocation');
       if (savedLocation) {
         const locationData = JSON.parse(savedLocation);
-        setLocation(locationData.location);
-      } else {
-        getDeviceLocation();
+        setSelectedLocation({
+          Name: locationData.postOffice || '',
+          District: locationData.district || '',
+          State: locationData.state || '',
+          Pincode: locationData.pincode || '',
+          Block: ''
+        });
       }
     }
   }, [])
 
   const getDeviceLocation = async () => {
-    setIsGettingLocation(true)
+    setIsGettingLocation(true);
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          const lat = position.coords.latitude
-          const lon = position.coords.longitude
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
           
           try {
-            // Try to get location name from coordinates
-            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`)
-            const data = await response.json()
+            let detectedPincode = null;
             
-            if (data.city || data.locality) {
-              const locationName = `${data.locality || data.city}, ${data.principalSubdivision || data.countryName}`
-              setLocation(locationName)
-            } else {
-              setLocation(`${data.principalSubdivision || 'Your Area'}, ${data.countryName || 'India'}`)
+            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+            const data = await response.json();
+            if (data.postcode) {
+              detectedPincode = data.postcode;
+            }
+            
+            if (detectedPincode) {
+              setSearchTerm(detectedPincode);
+              setSearchType('pincode');
+              const pincodeData = await LocationService.searchByPincode(detectedPincode);
+              setLocationResults(pincodeData);
             }
           } catch (error) {
-            // Fallback to coordinates if geocoding fails
-            setLocation(`Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`)
+            console.error('Location detection failed:', error);
+            alert('Could not detect location. Please enter your pincode manually.');
           }
-          setIsGettingLocation(false)
+          setIsGettingLocation(false);
         },
         (error) => {
-          console.log('Location access denied or failed:', error)
-          setIsGettingLocation(false)
+          console.log('Location access denied:', error);
+          alert('Location access denied. Please enter your pincode manually.');
+          setIsGettingLocation(false);
         }
-      )
+      );
     } else {
-      setIsGettingLocation(false)
+      setIsGettingLocation(false);
     }
   }
 
-  const handleLocationSelect = (selectedLocation: string) => {
-    setLocation(selectedLocation)
+  const handleLocationSelect = (location: LocationData) => {
+    setSelectedLocation(location);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedLocation', JSON.stringify({
+        location: `${location.Name}, ${location.District}, ${location.State} - ${location.Pincode}`,
+        pincode: location.Pincode,
+        district: location.District,
+        state: location.State,
+        postOffice: location.Name
+      }));
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Store data in localStorage
+    if (!selectedLocation) {
+      alert('Please select a location first.');
+      return;
+    }
+    
     if (typeof window !== 'undefined') {
-      const selectedLocationData = localStorage.getItem('selectedLocation');
-      const locationData = selectedLocationData ? JSON.parse(selectedLocationData) : null;
-      
       localStorage.setItem('farmData', JSON.stringify({
-        location,
+        location: `${selectedLocation.Name}, ${selectedLocation.District}, ${selectedLocation.State}`,
         crop,
         farmSize,
-        pincode: locationData?.pincode || '',
-        district: locationData?.district || '',
-        state: locationData?.state || '',
-        postOffice: locationData?.postOffice || ''
+        pincode: selectedLocation.Pincode,
+        district: selectedLocation.District,
+        state: selectedLocation.State,
+        postOffice: selectedLocation.Name
       }));
     }
     
     router.push('/dashboard')
   }
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setShowCropList(false)
-      setShowLocationList(false)
     }
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
@@ -538,7 +583,13 @@ export default function CropSetupPage() {
       
       <nav className="p-4 shadow-lg relative z-10" style={{backgroundColor: '#1e5631', color: '#ffffff'}}>
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold flex items-center gap-2">{t('title')}</h1>
+          <div className="flex items-center gap-3">
+            <div className="relative w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: '#4CAF50', transform: 'scale(1.3)'}}>
+              <div className="absolute inset-0 rounded-full opacity-20" style={{backgroundImage: 'radial-gradient(circle, #8BC34A 0%, #4CAF50 50%, #2E7D32 100%)'}}></div>
+              <span className="relative z-10 text-white font-bold text-lg">K.S</span>
+            </div>
+            <h1 className="text-2xl font-bold">{t('title')}</h1>
+          </div>
           <div className="flex items-center gap-6">
             <div className="flex gap-6">
               <a href="/crop-setup" className="hover:opacity-80 font-semibold" style={{color: '#ffffff'}}>{t('home')}</a>
@@ -551,23 +602,95 @@ export default function CropSetupPage() {
         </div>
       </nav>
 
-      <main className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[80vh] relative z-10 gap-8">
-        <LocationSearch />
-        <div className="p-8 rounded-xl shadow-2xl w-full max-w-lg text-base relative overflow-hidden" style={{backgroundColor: '#ffffff'}}>
+      <main className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[80vh] relative z-10">
+        <div className="p-8 rounded-xl shadow-2xl w-full max-w-2xl text-base relative overflow-hidden" style={{backgroundColor: '#ffffff'}}>
           {/* Content */}
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-6 text-center uppercase p-4 rounded-lg flex items-center justify-center gap-2" style={{color: '#2c3e2d'}}>
-              {t('farmTitle')}
+              Farm Setup
             </h2>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Location Search Section */}
+            <div className="border-2 border-green-200 rounded-lg p-4 bg-green-50">
+              <h3 className="text-lg font-semibold mb-3 text-green-800">Location</h3>
+              
+              <div className="flex gap-2 mb-3">
+                <select 
+                  value={searchType} 
+                  onChange={(e) => setSearchType(e.target.value as 'pincode' | 'postoffice')}
+                  className="px-3 py-2 border rounded-md text-sm"
+                >
+                  <option value="pincode">Pincode</option>
+                  <option value="postoffice">Post Office</option>
+                </select>
+                
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder={searchType === 'pincode' ? 'Enter pincode' : 'Enter post office name'}
+                  className="flex-1 px-3 py-2 border rounded-md text-sm"
+                />
+                
+                <button
+                  type="button"
+                  onClick={handleLocationSearch}
+                  disabled={locationLoading}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
+                >
+                  {locationLoading ? 'Searching...' : 'Search'}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={getDeviceLocation}
+                  disabled={isGettingLocation}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm flex items-center gap-1"
+                >
+                  {isGettingLocation ? (
+                    <>
+                      <div className="animate-spin h-3 w-3 border border-white border-t-transparent rounded-full"></div>
+                      Auto
+                    </>
+                  ) : (
+                    'Auto Detect'
+                  )}
+                </button>
+              </div>
+
+              {selectedLocation && (
+                <div className="mb-3 p-3 bg-green-100 border border-green-300 rounded-md">
+                  <div className="text-sm font-medium text-green-800">Selected:</div>
+                  <div className="text-green-700 font-medium">{selectedLocation.Name}</div>
+                  <div className="text-sm text-green-600">{selectedLocation.District}, {selectedLocation.State} - {selectedLocation.Pincode}</div>
+                </div>
+              )}
+
+              {locationResults.length > 0 && (
+                <div className="max-h-32 overflow-y-auto border rounded-md">
+                  {locationResults.slice(0, 5).map((location, index) => (
+                    <div 
+                      key={index} 
+                      onClick={() => handleLocationSelect(location)}
+                      className={`p-2 cursor-pointer hover:bg-blue-50 border-b last:border-b-0 text-sm ${
+                        selectedLocation?.Pincode === location.Pincode ? 'bg-green-100' : 'bg-white'
+                      }`}
+                    >
+                      <div className="font-medium">{location.Name}</div>
+                      <div className="text-xs text-gray-600">{location.District}, {location.State} - {location.Pincode}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
 
             <div className="relative">
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('cropLabel')}</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>Crop Type</label>
               <input
                 type="text"
-                placeholder={t('cropPlaceholder')}
+                placeholder="Search for your crop..."
                 value={crop || cropSearch}
                 onChange={(e) => {
                   setCropSearch(e.target.value)
@@ -596,22 +719,22 @@ export default function CropSetupPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="p-3 text-gray-500">{t('noCropsFound')}</div>
+                    <div className="p-3 text-gray-500">No crops found</div>
                   )}
                 </div>
               )}
               {crop && (
                 <div className="mt-2 text-sm text-green-700 font-medium">
-                  {t('selected')} {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                  Selected: {crop.charAt(0).toUpperCase() + crop.slice(1)}
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('farmSizeLabel')}</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>Farm Size (in acres)</label>
               <input
                 type="number"
-                placeholder={t('farmSizePlaceholder')}
+                placeholder="Enter farm size in acres"
                 value={farmSize}
                 onChange={(e) => setFarmSize(e.target.value)}
                 className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -624,8 +747,9 @@ export default function CropSetupPage() {
               type="submit"
               className="w-full p-3 rounded-lg font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200 hover:opacity-90"
               style={{backgroundColor: '#3498db', color: '#ffffff'}}
+              disabled={!selectedLocation || !crop || !farmSize}
             >
-              {t('submitButton')}
+Start Farming Dashboard
             </button>
           </form>
           </div>

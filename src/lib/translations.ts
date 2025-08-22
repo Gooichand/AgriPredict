@@ -274,14 +274,14 @@ export type Language = keyof typeof translations
 export type TranslationKey = keyof typeof translations.en
 
 export const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
-  { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
-  { code: 'te', name: 'తెలుగు', flag: '🇮🇳' },
-  { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
-  { code: 'mr', name: 'मराठी', flag: '🇮🇳' },
-  { code: 'gu', name: 'ગુજરાતી', flag: '🇮🇳' },
-  { code: 'kn', name: 'ಕನ್ನಡ', flag: '🇮🇳' },
-  { code: 'ml', name: 'മലയാളം', flag: '🇮🇳' },
-  { code: 'pa', name: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+  { code: 'en', name: 'English', flag: '' },
+  { code: 'hi', name: 'हिंदी', flag: '' },
+  { code: 'bn', name: 'বাংলা', flag: '' },
+  { code: 'te', name: 'తెలుగు', flag: '' },
+  { code: 'ta', name: 'தமிழ்', flag: '' },
+  { code: 'mr', name: 'मराठी', flag: '' },
+  { code: 'gu', name: 'ગુજરાતી', flag: '' },
+  { code: 'kn', name: 'ಕನ್ನಡ', flag: '' },
+  { code: 'ml', name: 'മലയാളം', flag: '' },
+  { code: 'pa', name: 'ਪੰਜਾਬੀ', flag: '' },
 ] as const

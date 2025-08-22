@@ -138,9 +138,15 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/crop-setup" className="text-2xl font-bold flex items-center gap-2">
-            {t('title')}
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="relative w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: '#4CAF50', transform: 'scale(1.3)'}}>
+              <div className="absolute inset-0 rounded-full opacity-20" style={{backgroundImage: 'radial-gradient(circle, #8BC34A 0%, #4CAF50 50%, #2E7D32 100%)'}}></div>
+              <span className="relative z-10 text-white font-bold text-lg">K.S</span>
+            </div>
+            <Link href="/crop-setup" className="text-2xl font-bold">
+              {t('title')}
+            </Link>
+          </div>
           <div className="flex items-center gap-6">
             <div className="flex gap-6">
               <Link href="/crop-setup" className="hover:text-yellow-200">{t('home')}</Link>
@@ -182,18 +188,18 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">🌱 Planting Schedule for {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)}</h3>
+          <h3 className="text-xl font-semibold mb-4">Planting Schedule for {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">📅 Best Planting Time</h4>
+              <h4 className="font-semibold text-green-800 mb-2">Best Planting Time</h4>
               <p className="text-sm text-green-700 mb-1"><strong>Season:</strong> {getPlantingSchedule(farmData.crop).season}</p>
               <p className="text-sm text-green-700 mb-1"><strong>Months:</strong> {getPlantingSchedule(farmData.crop).months}</p>
               <p className="text-sm text-green-700"><strong>Next Planting:</strong> {getPlantingSchedule(farmData.crop).nextPlanting}</p>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">⏰ Harvest Timeline</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">Harvest Timeline</h4>
               <p className="text-sm text-blue-700 mb-2"><strong>Harvest Time:</strong> {getPlantingSchedule(farmData.crop).harvestTime}</p>
-              <p className="text-xs text-blue-600">💡 Plan your planting according to monsoon and market demand</p>
+              <p className="text-xs text-blue-600">Plan your planting according to monsoon and market demand</p>
             </div>
           </div>
         </div>
@@ -216,12 +222,12 @@ export default function Dashboard() {
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-4">Data Sources</h3>
           <ul className="space-y-2 text-sm">
-            <li>🌾 <strong>Yield Predictions:</strong> Ministry of Agriculture & Farmers Welfare, India</li>
-            <li>🌤️ <strong>Weather Data:</strong> India Meteorological Department (IMD)</li>
-            <li>🚨 <strong>Crop Alerts:</strong> State Agricultural Universities</li>
-            <li>📊 <strong>Historical Data:</strong> Agricultural Statistics Division</li>
-            <li>🗺️ <strong>Satellite Data:</strong> ISRO's RISAT & Cartosat missions</li>
-            <li>🌱 <strong>Planting Schedules:</strong> Indian Council of Agricultural Research (ICAR)</li>
+            <li><strong>Yield Predictions:</strong> Ministry of Agriculture & Farmers Welfare, India</li>
+            <li><strong>Weather Data:</strong> India Meteorological Department (IMD)</li>
+            <li><strong>Crop Alerts:</strong> State Agricultural Universities</li>
+            <li><strong>Historical Data:</strong> Agricultural Statistics Division</li>
+            <li><strong>Satellite Data:</strong> ISRO's RISAT & Cartosat missions</li>
+            <li><strong>Planting Schedules:</strong> Indian Council of Agricultural Research (ICAR)</li>
           </ul>
         </div>
       </main>
