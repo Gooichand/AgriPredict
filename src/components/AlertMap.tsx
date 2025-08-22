@@ -17,20 +17,29 @@ L.Icon.Default.mergeOptions({
 export default function AlertMap() {
   const [farmData, setFarmData] = useState<any>(null)
   const [mapLayer, setMapLayer] = useState('base')
-  const [coordinates, setCoordinates] = useState([28.6139, 77.2090]) // Default to Delhi
+  const [coordinates, setCoordinates] = useState<[number, number]>([28.6139, 77.2090])
   const [mapKey, setMapKey] = useState(0)
   const [locationData, setLocationData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+  const [mapReady, setMapReady] = useState(false)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const data = localStorage.getItem('farmData')
+      const selectedLocation = localStorage.getItem('selectedLocation')
+      
       if (data) {
         const parsed = JSON.parse(data)
         setFarmData(parsed)
         
-        // Get coordinates and real data for the location
-        if (parsed.location) {
+        // Use selected location data if available
+        if (selectedLocation) {
+          const locationData = JSON.parse(selectedLocation)
+          if (locationData.pincode) {
+            getCoordinatesFromPincode(locationData.pincode)
+            loadLocationData(locationData.location || parsed.location)
+          }
+        } else if (parsed.location) {
           getLocationCoordinates(parsed.location)
           loadLocationData(parsed.location)
         }
@@ -96,66 +105,77 @@ export default function AlertMap() {
     return { speed, direction, gust }
   }
 
-  const getLocationCoordinates = async (location: string) => {
-    // Predefined coordinates for major Indian cities
-    const locationCoords: { [key: string]: [number, number] } = {
-      'mumbai': [19.0760, 72.8777],
-      'delhi': [28.6139, 77.2090],
-      'bangalore': [12.9716, 77.5946],
-      'hyderabad': [17.3850, 78.4867],
-      'ahmedabad': [23.0225, 72.5714],
-      'chennai': [13.0827, 80.2707],
-      'kolkata': [22.5726, 88.3639],
-      'pune': [18.5204, 73.8567],
-      'jaipur': [26.9124, 75.7873],
-      'surat': [21.1702, 72.8311],
-      'lucknow': [26.8467, 80.9462],
-      'kanpur': [26.4499, 80.3319],
-      'nagpur': [21.1458, 79.0882],
-      'indore': [22.7196, 75.8577],
-      'thane': [19.2183, 72.9781],
-      'bhopal': [23.2599, 77.4126],
-      'visakhapatnam': [17.6868, 83.2185],
-      'pimpri': [18.6298, 73.7997],
-      'patna': [25.5941, 85.1376],
-      'vadodara': [22.3072, 73.1812],
-      'ghaziabad': [28.6692, 77.4538],
-      'ludhiana': [30.9010, 75.8573],
-      'agra': [27.1767, 78.0081],
-      'nashik': [19.9975, 73.7898],
-      'faridabad': [28.4089, 77.3178],
-      'meerut': [28.9845, 77.7064],
-      'rajkot': [22.3039, 70.8022],
-      'kalyan': [19.2437, 73.1355],
-      'vasai': [19.4912, 72.8054],
-      'varanasi': [25.3176, 82.9739],
-      'srinagar': [34.0837, 74.7973],
-      'aurangabad': [19.8762, 75.3433],
-      'dhanbad': [23.7957, 86.4304],
-      'amritsar': [31.6340, 74.8723],
-      'navi mumbai': [19.0330, 73.0297],
-      'allahabad': [25.4358, 81.8463],
-      'ranchi': [23.3441, 85.3096],
-      'howrah': [22.5958, 88.2636],
-      'coimbatore': [11.0168, 76.9558],
-      'jabalpur': [23.1815, 79.9864],
-      'gwalior': [26.2183, 78.1828],
-      'vijayawada': [16.5062, 80.6480],
-      'jodhpur': [26.2389, 73.0243],
-      'madurai': [9.9252, 78.1198],
-      'raipur': [21.2514, 81.6296],
-      'kota': [25.2138, 75.8648],
-      'chandigarh': [30.7333, 76.7794],
-      'gurgaon': [28.4595, 77.0266],
-      'noida': [28.5355, 77.3910]
+  const getCoordinatesFromPincode = async (pincode: string) => {
+    try {
+      // Use PostalPincode API to get coordinates
+      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+      const data = await response.json()
+      
+      if (data[0]?.Status === 'Success' && data[0]?.PostOffice?.[0]) {
+        const postOffice = data[0].PostOffice[0]
+        // Use approximate coordinates based on district/state
+        const coords = getDistrictCoordinates(postOffice.District, postOffice.State)
+        if (coords) {
+          setCoordinates(coords)
+          setMapReady(false)
+          setTimeout(() => {
+            setMapKey(prev => prev + 1)
+            setMapReady(true)
+          }, 100)
+        }
+      }
+    } catch (error) {
+      console.log('Using fallback coordinates')
     }
+  }
 
+  const getDistrictCoordinates = (district: string, state: string): [number, number] | null => {
+    const districtCoords: { [key: string]: [number, number] } = {
+      // Major districts with coordinates
+      'MUMBAI': [19.0760, 72.8777], 'DELHI': [28.6139, 77.2090],
+      'BANGALORE': [12.9716, 77.5946], 'HYDERABAD': [17.3850, 78.4867],
+      'CHENNAI': [13.0827, 80.2707], 'KOLKATA': [22.5726, 88.3639],
+      'PUNE': [18.5204, 73.8567], 'AHMEDABAD': [23.0225, 72.5714],
+      'JAIPUR': [26.9124, 75.7873], 'SURAT': [21.1702, 72.8311],
+      'LUCKNOW': [26.8467, 80.9462], 'KANPUR': [26.4499, 80.3319],
+      'NAGPUR': [21.1458, 79.0882], 'PATNA': [25.5941, 85.1376],
+      'INDORE': [22.7196, 75.8577], 'BHOPAL': [23.2599, 77.4126],
+      'LUDHIANA': [30.9010, 75.8573], 'AGRA': [27.1767, 78.0081],
+      'VARANASI': [25.3176, 82.9739], 'MEERUT': [28.9845, 77.7064],
+      'NASHIK': [19.9975, 73.7898], 'RAJKOT': [22.3039, 70.8022],
+      'FARIDABAD': [28.4089, 77.3178], 'GHAZIABAD': [28.6692, 77.4538],
+      'THANE': [19.2183, 72.9781], 'VADODARA': [22.3072, 73.1812],
+      'VISAKHAPATNAM': [17.6868, 83.2185], 'COIMBATORE': [11.0168, 76.9558],
+      'MADURAI': [9.9252, 78.1198], 'JODHPUR': [26.2389, 73.0243],
+      'RANCHI': [23.3441, 85.3096], 'RAIPUR': [21.2514, 81.6296],
+      'CHANDIGARH': [30.7333, 76.7794], 'KOTA': [25.2138, 75.8648],
+      'GURGAON': [28.4595, 77.0266], 'NOIDA': [28.5355, 77.3910],
+      'HOWRAH': [22.5958, 88.2636], 'JABALPUR': [23.1815, 79.9864],
+      'GWALIOR': [26.2183, 78.1828], 'VIJAYAWADA': [16.5062, 80.6480],
+      'AMRITSAR': [31.6340, 74.8723], 'ALLAHABAD': [25.4358, 81.8463],
+      'DHANBAD': [23.7957, 86.4304], 'AURANGABAD': [19.8762, 75.3433],
+      'SRINAGAR': [34.0837, 74.7973], 'BANKA': [24.8878, 86.9194],
+      'BHAGALPUR': [25.2425, 86.9842], 'MUNGER': [25.3764, 86.4733],
+      'BHOJPUR': [25.4382, 84.4628], 'GAYA': [24.7914, 85.0002],
+      'ARWAL': [25.2522, 84.6819], 'JEHANABAD': [25.2124, 84.9895],
+      'JAMUI': [24.9277, 86.2231], 'SHEIKHPURA': [25.1417, 85.8629],
+      'NALANDA': [25.1372, 85.4548], 'LAKHISARAI': [25.1726, 86.0939]
+    }
+    
+    return districtCoords[district.toUpperCase()] || districtCoords[state.toUpperCase()] || null
+  }
+
+  const getLocationCoordinates = async (location: string) => {
     const locationKey = location.toLowerCase().split(',')[0].trim()
-    const coords = locationCoords[locationKey]
+    const coords = getDistrictCoordinates(locationKey, '')
     
     if (coords) {
       setCoordinates(coords)
-      setMapKey(prev => prev + 1) // Force map re-render
+      setMapReady(false)
+      setTimeout(() => {
+        setMapKey(prev => prev + 1)
+        setMapReady(true)
+      }, 100)
     }
   }
 
@@ -290,41 +310,51 @@ export default function AlertMap() {
           />
         )}
         
-        <MapContainer
-          center={coordinates as [number, number]}
-          zoom={12}
-          style={{ height: '100%', width: '100%' }}
-          key={mapKey}
-        >
-          <TileLayer
-            url={getMapTileUrl()}
-            attribution='&copy; OpenStreetMap contributors'
-          />
-          
-          <Marker position={coordinates as [number, number]}>
-            <Popup>
-              <div className="text-center min-w-48">
-                {farmData && locationData ? (
-                  <>
-                    <strong className="text-green-600">🌾 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Farm</strong><br/>
-                    📍 {farmData.location}<br/>
-                    📏 {farmData.farmSize} acres<br/>
-                    <hr className="my-2"/>
-                    <div className="text-left text-sm">
-                      <div><strong>🌡️ Temperature:</strong> {locationData.temperature}°C</div>
-                      <div><strong>💧 Humidity:</strong> {locationData.humidity}%</div>
-                      <div><strong>💨 Wind:</strong> {locationData.wind.speed} km/h {locationData.wind.direction}</div>
-                      <div><strong>🏭 AQI:</strong> {locationData.airQuality.aqi} ({locationData.airQuality.status})</div>
-                      <div><strong>🌤️ Condition:</strong> {locationData.weather.description}</div>
-                    </div>
-                  </>
-                ) : (
-                  <span>📍 Loading farm data...</span>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        </MapContainer>
+        {coordinates && coordinates.length === 2 ? (
+          <MapContainer
+            center={coordinates}
+            zoom={12}
+            style={{ height: '100%', width: '100%' }}
+            key={mapKey}
+            whenCreated={() => setMapReady(true)}
+          >
+            <TileLayer
+              url={getMapTileUrl()}
+              attribution='&copy; OpenStreetMap contributors'
+            />
+            
+            <Marker position={coordinates}>
+              <Popup>
+                <div className="text-center min-w-48">
+                  {farmData && locationData ? (
+                    <>
+                      <strong className="text-green-600">🌾 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Farm</strong><br/>
+                      📍 {farmData.location}<br/>
+                      📏 {farmData.farmSize} acres<br/>
+                      <hr className="my-2"/>
+                      <div className="text-left text-sm">
+                        <div><strong>🌡️ Temperature:</strong> {locationData.temperature}°C</div>
+                        <div><strong>💧 Humidity:</strong> {locationData.humidity}%</div>
+                        <div><strong>💨 Wind:</strong> {locationData.wind.speed} km/h {locationData.wind.direction}</div>
+                        <div><strong>🏭 AQI:</strong> {locationData.airQuality.aqi} ({locationData.airQuality.status})</div>
+                        <div><strong>🌤️ Condition:</strong> {locationData.weather.description}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <span>📍 Loading farm data...</span>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          </MapContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full bg-gray-100">
+            <div className="text-center">
+              <div className="animate-spin h-8 w-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+              <p className="text-gray-600">Loading map...</p>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded">

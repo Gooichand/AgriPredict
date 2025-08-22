@@ -449,17 +449,22 @@ export default function CropSetupPage() {
     'Tughlakabad, Delhi', 'Badarpur, Delhi', 'Faridabad Border, Delhi', 'Surajkund, Delhi', 'Aravalli Hills, Delhi'
   ]
 
-  const handleLocationSearch = async () => {
+  const handleSmartLocationSearch = async () => {
     if (!searchTerm.trim()) return;
     
     setLocationLoading(true);
     try {
       let data: LocationData[] = [];
       
-      if (searchType === 'pincode') {
-        data = await LocationService.searchByPincode(searchTerm);
+      // Auto-detect if input is pincode (6 digits) or city/area name
+      const isPincode = /^\d{6}$/.test(searchTerm.trim());
+      
+      if (isPincode) {
+        data = await LocationService.searchByPincode(searchTerm.trim());
+        setSearchType('pincode');
       } else {
-        data = await LocationService.searchByPostOffice(searchTerm);
+        data = await LocationService.searchByPostOffice(searchTerm.trim());
+        setSearchType('postoffice');
       }
       
       setLocationResults(data);
@@ -488,42 +493,126 @@ export default function CropSetupPage() {
 
   const getDeviceLocation = async () => {
     setIsGettingLocation(true);
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
+    
+    if (!navigator.geolocation) {
+      alert('Location detection not supported. Please enter your location manually.');
+      setIsGettingLocation(false);
+      return;
+    }
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 300000
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        console.log('GPS coordinates:', lat, lon);
+        
+        try {
+          let detectedPincode = null;
+          let locationName = '';
           
+          // Method 1: BigDataCloud
           try {
-            let detectedPincode = null;
-            
-            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+            const response = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+            );
             const data = await response.json();
+            console.log('BigDataCloud response:', data);
+            
             if (data.postcode) {
               detectedPincode = data.postcode;
+              locationName = `${data.locality || data.city}, ${data.principalSubdivision}`;
+            } else if (data.city || data.locality) {
+              locationName = `${data.city || data.locality}, ${data.principalSubdivision}`;
             }
-            
-            if (detectedPincode) {
-              setSearchTerm(detectedPincode);
-              setSearchType('pincode');
-              const pincodeData = await LocationService.searchByPincode(detectedPincode);
-              setLocationResults(pincodeData);
-            }
-          } catch (error) {
-            console.error('Location detection failed:', error);
-            alert('Could not detect location. Please enter your pincode manually.');
+          } catch (e) {
+            console.log('BigDataCloud failed:', e);
           }
-          setIsGettingLocation(false);
-        },
-        (error) => {
-          console.log('Location access denied:', error);
-          alert('Location access denied. Please enter your pincode manually.');
-          setIsGettingLocation(false);
+          
+          // Method 2: IP-based location as fallback
+          if (!detectedPincode && !locationName) {
+            try {
+              const ipResponse = await fetch('https://ipapi.co/json/');
+              const ipData = await ipResponse.json();
+              console.log('IP location:', ipData);
+              
+              if (ipData.postal) {
+                detectedPincode = ipData.postal;
+                locationName = `${ipData.city}, ${ipData.region}`;
+              } else if (ipData.city) {
+                locationName = `${ipData.city}, ${ipData.region}`;
+              }
+            } catch (e) {
+              console.log('IP location failed:', e);
+            }
+          }
+          
+          // Process results
+          if (detectedPincode) {
+            console.log('Using pincode:', detectedPincode);
+            setSearchTerm(detectedPincode);
+            const pincodeData = await LocationService.searchByPincode(detectedPincode);
+            setLocationResults(pincodeData);
+            
+            if (pincodeData.length > 0) {
+              alert(`✅ Location detected: ${locationName} (PIN: ${detectedPincode})`);
+            } else {
+              alert(`Pincode ${detectedPincode} detected but no postal data found. Try manual search.`);
+            }
+          } else if (locationName) {
+            console.log('Using city name:', locationName);
+            const cityName = locationName.split(',')[0].trim();
+            setSearchTerm(cityName);
+            
+            const cityData = await LocationService.searchByPostOffice(cityName);
+            setLocationResults(cityData);
+            
+            if (cityData.length > 0) {
+              alert(`✅ Location detected: ${locationName}`);
+            } else {
+              alert(`Location detected as ${locationName}, but no postal data found. Try manual search.`);
+            }
+          } else {
+            alert('❌ Could not detect your location. Please enter your pincode or city name manually.');
+          }
+          
+        } catch (error) {
+          console.error('Location processing error:', error);
+          alert('Location detection failed. Please enter your location manually.');
         }
-      );
-    } else {
-      setIsGettingLocation(false);
-    }
+        
+        setIsGettingLocation(false);
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        let message = '❌ Location detection failed: ';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            message += 'Permission denied. Please allow location access.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            message += 'Location unavailable.';
+            break;
+          case error.TIMEOUT:
+            message += 'Request timed out.';
+            break;
+          default:
+            message += 'Unknown error.';
+            break;
+        }
+        
+        message += ' Please enter your location manually.';
+        alert(message);
+        setIsGettingLocation(false);
+      },
+      options
+    );
   }
 
   const handleLocationSelect = (location: LocationData) => {
@@ -616,26 +705,17 @@ export default function CropSetupPage() {
               <h3 className="text-lg font-semibold mb-3 text-green-800">Location</h3>
               
               <div className="flex gap-2 mb-3">
-                <select 
-                  value={searchType} 
-                  onChange={(e) => setSearchType(e.target.value as 'pincode' | 'postoffice')}
-                  className="px-3 py-2 border rounded-md text-sm"
-                >
-                  <option value="pincode">Pincode</option>
-                  <option value="postoffice">Post Office</option>
-                </select>
-                
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder={searchType === 'pincode' ? 'Enter pincode' : 'Enter post office name'}
+                  placeholder="Enter pincode (110001) or city/area name (Mumbai, Andheri)"
                   className="flex-1 px-3 py-2 border rounded-md text-sm"
                 />
                 
                 <button
                   type="button"
-                  onClick={handleLocationSearch}
+                  onClick={handleSmartLocationSearch}
                   disabled={locationLoading}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 text-sm"
                 >
@@ -646,15 +726,18 @@ export default function CropSetupPage() {
                   type="button"
                   onClick={getDeviceLocation}
                   disabled={isGettingLocation}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm flex items-center gap-1"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 text-sm flex items-center gap-1 shadow-md transform hover:scale-105 transition-all duration-200"
+                  title="Click to detect your location automatically"
                 >
                   {isGettingLocation ? (
                     <>
                       <div className="animate-spin h-3 w-3 border border-white border-t-transparent rounded-full"></div>
-                      Auto
+                      Detecting...
                     </>
                   ) : (
-                    'Auto Detect'
+                    <>
+                      📍 Auto Detect
+                    </>
                   )}
                 </button>
               </div>

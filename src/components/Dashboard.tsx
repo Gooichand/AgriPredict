@@ -316,16 +316,118 @@ export default function Dashboard() {
           <CropHealthAnalysis farmData={farmData} />
         </div>
 
-        <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">Data Sources</h3>
-          <ul className="space-y-2 text-sm">
-            <li><strong>Yield Predictions:</strong> Ministry of Agriculture & Farmers Welfare, India</li>
-            <li><strong>Weather Data:</strong> India Meteorological Department (IMD)</li>
-            <li><strong>Crop Alerts:</strong> State Agricultural Universities</li>
-            <li><strong>Historical Data:</strong> Agricultural Statistics Division</li>
-            <li><strong>Satellite Data:</strong> ISRO's RISAT & Cartosat missions</li>
-            <li><strong>Planting Schedules:</strong> Indian Council of Agricultural Research (ICAR)</li>
-          </ul>
+        <div className="mt-6 bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-lg border border-blue-100">
+          <div className="flex items-center mb-6">
+            <div className="bg-gradient-to-r from-blue-600 to-green-600 p-3 rounded-full mr-4">
+              <span className="text-white text-xl">📊</span>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800">Trusted Data Sources</h3>
+              <p className="text-sm text-gray-600">Powered by India's leading agricultural institutions</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
+              <div className="flex items-center mb-2">
+                <span className="text-green-600 text-lg mr-2">🌾</span>
+                <h4 className="font-semibold text-gray-800">Yield Predictions</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://agricoop.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-green-600 hover:underline">
+                  Ministry of Agriculture & Farmers Welfare, India
+                </a>
+              </p>
+              <p className="text-xs text-green-600 mt-1">Real-time crop yield forecasting</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-500">
+              <div className="flex items-center mb-2">
+                <span className="text-blue-600 text-lg mr-2">🌤️</span>
+                <h4 className="font-semibold text-gray-800">Weather Data</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline">
+                  India Meteorological Department (IMD)
+                </a>
+              </p>
+              <p className="text-xs text-blue-600 mt-1">Live weather monitoring & forecasts</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-500">
+              <div className="flex items-center mb-2">
+                <span className="text-yellow-600 text-lg mr-2">🚨</span>
+                <h4 className="font-semibold text-gray-800">Crop Alerts</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://icar.org.in" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-600 hover:underline">
+                  {farmData?.state || 'State'} Agricultural Universities
+                </a>
+              </p>
+              <p className="text-xs text-yellow-600 mt-1">Location-specific farming alerts</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-purple-500">
+              <div className="flex items-center mb-2">
+                <span className="text-purple-600 text-lg mr-2">📈</span>
+                <h4 className="font-semibold text-gray-800">Historical Data</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://eands.dacnet.nic.in" target="_blank" rel="noopener noreferrer" className="hover:text-purple-600 hover:underline">
+                  Agricultural Statistics Division
+                </a>
+              </p>
+              <p className="text-xs text-purple-600 mt-1">10+ years of farming trends</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-red-500">
+              <div className="flex items-center mb-2">
+                <span className="text-red-600 text-lg mr-2">🛰️</span>
+                <h4 className="font-semibold text-gray-800">Satellite Data</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://isro.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 hover:underline">
+                  ISRO's RISAT & Cartosat missions
+                </a>
+              </p>
+              <p className="text-xs text-red-600 mt-1">High-resolution crop monitoring</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-indigo-500">
+              <div className="flex items-center mb-2">
+                <span className="text-indigo-600 text-lg mr-2">📅</span>
+                <h4 className="font-semibold text-gray-800">Planting Schedules</h4>
+              </div>
+              <p className="text-sm text-gray-600">
+                <a href="https://icar.org.in" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 hover:underline">
+                  Indian Council of Agricultural Research (ICAR)
+                </a>
+              </p>
+              <p className="text-xs text-indigo-600 mt-1">Science-based crop calendars</p>
+            </div>
+          </div>
+          
+          <div className="mt-6 bg-gradient-to-r from-green-100 to-blue-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🤖</span>
+                <div>
+                  <h4 className="font-semibold text-gray-800">AI-Powered Analysis</h4>
+                  <p className="text-sm text-gray-600">Advanced machine learning for personalized recommendations</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Updated for</div>
+                <div className="font-semibold text-green-600">{farmData?.location || 'Your Location'}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-500">
+              🔒 All data is processed securely and updated in real-time for {farmData?.district || 'your area'}
+            </p>
+          </div>
         </div>
       </main>
     </div>
