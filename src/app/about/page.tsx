@@ -14,6 +14,7 @@ export default function AboutPage() {
             <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
             <Link href="/about" className="hover:text-yellow-200 font-semibold">About</Link>
             <Link href="/contact" className="hover:text-yellow-200">Contact</Link>
+            <Link href="/news" className="hover:text-yellow-200">News</Link>
           </div>
         </div>
       </nav>

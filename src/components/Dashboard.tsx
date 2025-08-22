@@ -143,6 +143,7 @@ export default function Dashboard() {
             <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
             <Link href="/about" className="hover:text-yellow-200">About</Link>
             <Link href="/contact" className="hover:text-yellow-200">Contact</Link>
+            <Link href="/news" className="hover:text-yellow-200">News</Link>
             <Link href="/dashboard" className="hover:text-yellow-200 font-semibold">Dashboard</Link>
           </div>
         </div>
