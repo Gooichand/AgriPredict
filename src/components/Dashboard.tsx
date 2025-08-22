@@ -9,6 +9,8 @@ import ChatBot from './ChatBot'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from './LanguageSwitcher'
+import { CropGrowthService } from '@/lib/cropGrowthService'
+import { GoogleCalendarService } from '@/lib/googleCalendarService'
 
 interface FarmData {
   location: string
@@ -18,11 +20,13 @@ interface FarmData {
   district?: string
   state?: string
   postOffice?: string
+  plantingDate?: string
 }
 
 export default function Dashboard() {
   const [farmData, setFarmData] = useState<FarmData | null>(null)
   const [activeSection, setActiveSection] = useState('overview')
+  const [calendarInitialized, setCalendarInitialized] = useState(false)
   const { t } = useLanguage()
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({})
 
@@ -32,6 +36,9 @@ export default function Dashboard() {
       if (data) {
         setFarmData(JSON.parse(data))
       }
+      
+      // Initialize Google Calendar API
+      GoogleCalendarService.initialize().then(setCalendarInitialized)
     }
   }, [])
 
@@ -121,68 +128,17 @@ export default function Dashboard() {
     return alert
   }
 
-  const getPlantingSchedule = (crop: string) => {
-    const schedules: { [key: string]: { season: string; months: string; nextPlanting: string; harvestTime: string } } = {
-      rice: { 
-        season: 'Kharif & Rabi', 
-        months: 'June-July (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
-      },
-      wheat: { 
-        season: 'Rabi', 
-        months: 'October-December', 
-        nextPlanting: 'October 2024 (Post-monsoon)',
-        harvestTime: '4-5 months after planting'
-      },
-      corn: { 
-        season: 'Kharif & Rabi', 
-        months: 'June-July (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
-      },
-      cotton: { 
-        season: 'Kharif', 
-        months: 'April-June', 
-        nextPlanting: 'April 2024 (Pre-monsoon)',
-        harvestTime: '5-6 months after planting'
-      },
-      sugarcane: { 
-        season: 'Year-round', 
-        months: 'February-April (Spring) | Oct-Nov (Autumn)', 
-        nextPlanting: 'February 2024 (Spring planting)',
-        harvestTime: '10-12 months after planting'
-      },
-      soybean: { 
-        season: 'Kharif', 
-        months: 'June-July', 
-        nextPlanting: 'June 2024 (Monsoon season)',
-        harvestTime: '3-4 months after planting'
-      },
-      potato: { 
-        season: 'Rabi', 
-        months: 'October-December', 
-        nextPlanting: 'October 2024 (Post-monsoon)',
-        harvestTime: '2-3 months after planting'
-      },
-      tomato: { 
-        season: 'Year-round', 
-        months: 'July-Aug (Kharif) | Nov-Dec (Rabi)', 
-        nextPlanting: 'July 2024 (Monsoon season)',
-        harvestTime: '2-3 months after planting'
-      },
-      onion: { 
-        season: 'Rabi', 
-        months: 'November-January', 
-        nextPlanting: 'November 2024 (Post-monsoon)',
-        harvestTime: '4-5 months after planting'
-      }
-    }
-    return schedules[crop] || { 
-      season: 'Seasonal', 
-      months: 'Consult local agricultural officer', 
-      nextPlanting: 'Check with local experts',
-      harvestTime: 'Varies by crop variety'
+  const getHarvestTimeline = (crop: string, plantingDate?: string, farmSize?: string) => {
+    const planting = plantingDate ? new Date(plantingDate) : new Date()
+    const harvestDate = CropGrowthService.calculateHarvestDate(crop, planting)
+    const estimatedYield = getCropYield(crop, farmData?.state, farmData?.district)
+    const totalYield = farmSize ? (parseFloat(estimatedYield) * parseFloat(farmSize)).toFixed(1) : estimatedYield
+    
+    return {
+      plantingDate: CropGrowthService.formatDate(planting),
+      harvestDate: CropGrowthService.formatDate(harvestDate),
+      estimatedYield: `${totalYield} tons${farmSize ? ` from ${farmSize} acres` : ''}`,
+      growthDuration: CropGrowthService.getGrowthDuration(crop)
     }
   }
 
@@ -302,19 +258,56 @@ export default function Dashboard() {
           id="schedule"
           className="mt-6 bg-white p-6 rounded-lg shadow"
         >
-          <h3 className="text-xl font-semibold mb-4">📅 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Schedule for {farmData.state || 'Your Region'}</h3>
+          <h3 className="text-xl font-semibold mb-4">📅 {farmData.crop.charAt(0).toUpperCase() + farmData.crop.slice(1)} Harvest Timeline</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">Best Planting Time</h4>
-              <p className="text-sm text-green-700 mb-1"><strong>Season:</strong> {getPlantingSchedule(farmData.crop).season}</p>
-              <p className="text-sm text-green-700 mb-1"><strong>Months:</strong> {getPlantingSchedule(farmData.crop).months}</p>
-              <p className="text-sm text-green-700"><strong>Next Planting:</strong> {getPlantingSchedule(farmData.crop).nextPlanting}</p>
-              <p className="text-xs text-green-600 mt-1">Optimized for {farmData.state || 'your region'}</p>
+              <h4 className="font-semibold text-green-800 mb-3">📅 Exact Dates</h4>
+              <div className="space-y-2">
+                <p className="text-sm text-green-700">
+                  <strong>Planting Date:</strong> {getHarvestTimeline(farmData.crop, farmData.plantingDate, farmData.farmSize).plantingDate}
+                </p>
+                <p className="text-sm text-green-700">
+                  <strong>Harvest Date:</strong> {getHarvestTimeline(farmData.crop, farmData.plantingDate, farmData.farmSize).harvestDate}
+                </p>
+                <p className="text-sm text-green-700">
+                  <strong>Growth Duration:</strong> {getHarvestTimeline(farmData.crop, farmData.plantingDate, farmData.farmSize).growthDuration} days
+                </p>
+              </div>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Harvest Timeline</h4>
-              <p className="text-sm text-blue-700 mb-2"><strong>Harvest Time:</strong> {getPlantingSchedule(farmData.crop).harvestTime}</p>
-              <p className="text-xs text-blue-600">Estimated yield: {(parseFloat(getCropYield(farmData.crop, farmData.state, farmData.district)) * parseFloat(farmData.farmSize)).toFixed(1)} tons from {farmData.farmSize} acres</p>
+              <h4 className="font-semibold text-blue-800 mb-3">📊 Expected Yield</h4>
+              <p className="text-lg font-bold text-blue-700 mb-2">
+                {getHarvestTimeline(farmData.crop, farmData.plantingDate, farmData.farmSize).estimatedYield}
+              </p>
+              <p className="text-xs text-blue-600 mb-3">Based on {farmData.state || 'regional'} agricultural data</p>
+              
+              {calendarInitialized && (
+                <button
+                  onClick={async () => {
+                    const timeline = getHarvestTimeline(farmData.crop, farmData.plantingDate, farmData.farmSize)
+                    const harvestDate = CropGrowthService.calculateHarvestDate(
+                      farmData.crop, 
+                      farmData.plantingDate ? new Date(farmData.plantingDate) : new Date()
+                    )
+                    
+                    const success = await GoogleCalendarService.addHarvestEvent(
+                      farmData.crop,
+                      harvestDate,
+                      farmData.location,
+                      timeline.estimatedYield
+                    )
+                    
+                    if (success) {
+                      alert('✅ Harvest date added to your Google Calendar!')
+                    } else {
+                      alert('❌ Failed to add to calendar. Please try again.')
+                    }
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
+                >
+                  📅 Add to Google Calendar
+                </button>
+              )}
             </div>
           </div>
         </div>
