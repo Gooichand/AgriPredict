@@ -1,20 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function AboutPage() {
+  const { t } = useLanguage()
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50">
       <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/crop-setup" className="text-2xl font-bold flex items-center gap-2">
-            🌾 KISAN SAFE 🚜
+            {t('title')}
           </Link>
-          <div className="flex gap-6">
-            <Link href="/crop-setup" className="hover:text-yellow-200">Home</Link>
-            <Link href="/about" className="hover:text-yellow-200 font-semibold">About</Link>
-            <Link href="/contact" className="hover:text-yellow-200">Helplines</Link>
-            <Link href="/news" className="hover:text-yellow-200">News</Link>
+          <div className="flex items-center gap-6">
+            <div className="flex gap-6">
+              <Link href="/crop-setup" className="hover:text-yellow-200">{t('home')}</Link>
+              <Link href="/about" className="hover:text-yellow-200 font-semibold">{t('about')}</Link>
+              <Link href="/contact" className="hover:text-yellow-200">{t('helplines')}</Link>
+              <Link href="/news" className="hover:text-yellow-200">{t('news')}</Link>
+            </div>
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>
@@ -22,12 +29,12 @@ export default function AboutPage() {
       <main className="container mx-auto p-6">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-green-700 mb-6 text-center">
-            🌾 About KisanSafe
+            {t('aboutTitle')}
           </h1>
           
           <div className="prose max-w-none">
             <p className="text-lg text-gray-700 mb-6 text-center">
-              Empowering farmers with AI-driven insights for smarter crop management and higher yields.
+              {t('aboutDescription')}
             </p>
 
             <div className="grid md:grid-cols-2 gap-8 mb-8">

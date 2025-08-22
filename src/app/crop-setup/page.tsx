@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/contexts/LanguageContext'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function CropSetupPage() {
   const [location, setLocation] = useState('')
@@ -13,6 +15,7 @@ export default function CropSetupPage() {
   const [locationSearch, setLocationSearch] = useState('')
   const [showLocationList, setShowLocationList] = useState(false)
   const router = useRouter()
+  const { t } = useLanguage()
 
   const crops = [
     // Cereals & Grains
@@ -520,12 +523,15 @@ export default function CropSetupPage() {
       
       <nav className="p-4 shadow-lg relative z-10" style={{backgroundColor: '#1e5631', color: '#ffffff'}}>
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold flex items-center gap-2">🌾 KISAN SAFE 🚜</h1>
-          <div className="flex gap-6">
-            <a href="/crop-setup" className="hover:opacity-80 font-semibold" style={{color: '#ffffff'}}>Home</a>
-            <a href="/about" className="hover:opacity-80" style={{color: '#ffffff'}}>About</a>
-            <a href="/contact" className="hover:opacity-80" style={{color: '#ffffff'}}>Helplines</a>
-            <a href="/news" className="hover:opacity-80" style={{color: '#ffffff'}}>News</a>
+          <h1 className="text-2xl font-bold flex items-center gap-2">{t('title')}</h1>
+          <div className="flex items-center gap-6">
+            <div className="flex gap-6">
+              <a href="/crop-setup" className="hover:opacity-80 font-semibold" style={{color: '#ffffff'}}>{t('home')}</a>
+              <a href="/about" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('about')}</a>
+              <a href="/contact" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('helplines')}</a>
+              <a href="/news" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('news')}</a>
+            </div>
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>
@@ -535,21 +541,21 @@ export default function CropSetupPage() {
           {/* Content */}
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-6 text-center uppercase p-4 rounded-lg flex items-center justify-center gap-2" style={{color: '#2c3e2d'}}>
-              🌱 Tell us about your farm 🌾
+              {t('farmTitle')}
             </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🏡 Where is your farm located?</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('locationLabel')}</label>
               <p className="text-xs mb-3" style={{color: '#2c3e2d'}}>
-                {isGettingLocation ? '📍 Getting your location...' : 'We automatically detected your location, or enter manually'}
+                {isGettingLocation ? t('gettingLocation') : t('locationHint')}
               </p>
               
               <div className="space-y-3">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search worldwide locations (e.g., New York, Mumbai, London, Tokyo)"
+                    placeholder={t('locationPlaceholder')}
                     value={location || locationSearch}
                     onChange={(e) => {
                       setLocationSearch(e.target.value)
@@ -584,14 +590,14 @@ export default function CropSetupPage() {
                           </div>
                         ))
                       ) : (
-                        <div className="p-3 text-gray-500 text-sm">No locations found. You can still type your custom location.</div>
+                        <div className="p-3 text-gray-500 text-sm">{t('noLocationsFound')}</div>
                       )}
                     </div>
                   )}
                   
                   {location && (
                     <div className="mt-2 text-sm text-green-700 font-medium">
-                      ✅ Selected: {location}
+                      {t('selected')} {location}
                     </div>
                   )}
                 </div>
@@ -603,7 +609,7 @@ export default function CropSetupPage() {
                   className="w-full px-4 py-2 rounded-lg text-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
                   style={{backgroundColor: '#3498db', color: '#ffffff'}}
                 >
-                  {isGettingLocation ? '📍 Getting Location...' : '🔄 Refresh My Location'}
+                  {isGettingLocation ? t('gettingLocation') : t('refreshLocation')}
                 </button>
                 
 
@@ -615,10 +621,10 @@ export default function CropSetupPage() {
             </div>
 
             <div className="relative">
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🌾 What crop are you growing?</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('cropLabel')}</label>
               <input
                 type="text"
-                placeholder="Search for your crop (e.g., Rice, Wheat, Tomato)"
+                placeholder={t('cropPlaceholder')}
                 value={crop || cropSearch}
                 onChange={(e) => {
                   setCropSearch(e.target.value)
@@ -647,22 +653,22 @@ export default function CropSetupPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="p-3 text-gray-500">No crops found</div>
+                    <div className="p-3 text-gray-500">{t('noCropsFound')}</div>
                   )}
                 </div>
               )}
               {crop && (
                 <div className="mt-2 text-sm text-green-700 font-medium">
-                  ✅ Selected: {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                  {t('selected')} {crop.charAt(0).toUpperCase() + crop.slice(1)}
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🚜 Farm Size (acres)</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>{t('farmSizeLabel')}</label>
               <input
                 type="number"
-                placeholder="Enter farm size"
+                placeholder={t('farmSizePlaceholder')}
                 value={farmSize}
                 onChange={(e) => setFarmSize(e.target.value)}
                 className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -676,7 +682,7 @@ export default function CropSetupPage() {
               className="w-full p-3 rounded-lg font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200 hover:opacity-90"
               style={{backgroundColor: '#3498db', color: '#ffffff'}}
             >
-              Get Predictions
+              {t('submitButton')}
             </button>
           </form>
           </div>
