@@ -15,6 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script src="https://apis.google.com/js/api.js" async defer></script>
+      </head>
       <body className="bg-gray-50">
         <LanguageProvider>
           {children}
