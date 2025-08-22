@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { searchLocations, LocationData } from '@/lib/indianLocations'
+import LocationSearch from '@/components/LocationSearch'
 
 export default function CropSetupPage() {
   const [location, setLocation] = useState('')
@@ -537,7 +538,8 @@ export default function CropSetupPage() {
         </div>
       </nav>
 
-      <main className="container mx-auto p-6 flex items-center justify-center min-h-[80vh] relative z-10">
+      <main className="container mx-auto p-6 flex flex-col items-center justify-center min-h-[80vh] relative z-10 gap-8">
+        <LocationSearch />
         <div className="p-8 rounded-xl shadow-2xl w-full max-w-lg text-base relative overflow-hidden" style={{backgroundColor: '#ffffff'}}>
           {/* Content */}
           <div className="relative z-10">
