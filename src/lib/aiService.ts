@@ -302,27 +302,146 @@ export class AIService {
   }
 
   static async getPersonalizedAdvice(farmData: any) {
+    const cropAdvice = this.getCropSpecificAdvice(farmData.crop)
+    const currentMonth = new Date().getMonth() + 1
+    const seasonalTips = this.getSeasonalTips(farmData.crop, currentMonth)
+    const locationTips = this.getLocationTips(farmData.location, farmData.crop)
+    
+    return [...cropAdvice, ...seasonalTips, ...locationTips]
+  }
+  
+  private static getCropSpecificAdvice(crop: string) {
     const advice = {
       rice: [
-        'Apply nitrogen fertilizer during tillering stage',
-        'Maintain 2-3 cm water level in field',
-        'Monitor for brown plant hopper',
-        'Harvest when 80% grains turn golden'
+        'Maintain 2-3 cm water level during vegetative stage',
+        'Apply nitrogen in 3 splits: basal, tillering, and panicle initiation',
+        'Monitor for brown plant hopper and blast disease',
+        'Harvest when 80% grains turn golden yellow'
       ],
       wheat: [
-        'Sow seeds at 2-3 cm depth',
+        'Sow at 2-3 cm depth with 20-22 cm row spacing',
         'Apply first irrigation 20-25 days after sowing',
-        'Watch for rust disease symptoms',
-        'Harvest when moisture content is 20-25%'
+        'Use 100 kg/ha seed rate for timely sowing',
+        'Watch for aphids and rust diseases in February-March'
       ],
       corn: [
-        'Plant seeds 3-4 cm deep with 60cm row spacing',
-        'Side-dress with nitrogen at knee-high stage',
-        'Monitor for corn borer infestation',
-        'Harvest when kernels reach 20-25% moisture'
+        'Plant at 4-5 cm depth with 60x20 cm spacing',
+        'Side-dress nitrogen when plants are knee-high',
+        'Control weeds in first 45 days for maximum yield',
+        'Harvest when grain moisture is 20-25%'
+      ],
+      cotton: [
+        'Maintain 90x45 cm spacing for optimal plant population',
+        'Apply potash during square formation stage',
+        'Monitor for bollworm from flowering stage',
+        'Pick cotton in early morning for better quality'
+      ],
+      sugarcane: [
+        'Plant 2-bud setts at 5 cm depth in furrows',
+        'Apply high nitrogen during tillering phase',
+        'Earthing up at 4 and 8 months after planting',
+        'Harvest at 10-12 months when Brix reaches 18-20%'
+      ],
+      soybean: [
+        'Inoculate seeds with Rhizobium for nitrogen fixation',
+        'Maintain 30x10 cm spacing for optimal yield',
+        'Apply phosphorus and potash at sowing time',
+        'Harvest when pods turn brown and rattle'
+      ],
+      potato: [
+        'Plant seed tubers at 15-20 cm depth',
+        'Hill up soil around plants when 15 cm tall',
+        'Stop irrigation 10 days before harvest',
+        'Harvest when skin is firm and doesn\'t rub off easily'
+      ],
+      tomato: [
+        'Transplant 25-30 day old seedlings',
+        'Stake plants and prune suckers regularly',
+        'Apply calcium to prevent blossom end rot',
+        'Harvest when fruits show first color break'
+      ],
+      onion: [
+        'Transplant when seedlings are pencil thick',
+        'Stop watering 2 weeks before harvest',
+        'Apply sulfur for better bulb development',
+        'Harvest when 50% tops fall and dry naturally'
+      ],
+      mustard: [
+        'Sow at 2-3 cm depth with 30 cm row spacing',
+        'Apply sulfur fertilizer for oil content',
+        'Control aphids during flowering stage',
+        'Harvest when pods turn yellowish brown'
+      ],
+      groundnut: [
+        'Sow at 3-4 cm depth with 30x10 cm spacing',
+        'Apply gypsum during pegging stage',
+        'Avoid waterlogging during pod development',
+        'Harvest when leaves turn yellow and pods are mature'
+      ],
+      barley: [
+        'Sow at 2-3 cm depth with 22-25 cm row spacing',
+        'Apply nitrogen in 2 splits for better tillering',
+        'Monitor for powdery mildew in humid conditions',
+        'Harvest when grains are hard and straw turns golden'
       ]
     }
-    return advice[farmData.crop] || ['Follow local agricultural guidelines', 'Consult with agricultural extension officer']
+    return advice[crop] || [
+      `Follow recommended spacing for ${crop} cultivation`,
+      `Apply balanced fertilizer based on soil test`,
+      `Monitor for common pests and diseases`,
+      `Harvest at proper maturity stage`
+    ]
+  }
+  
+  private static getSeasonalTips(crop: string, month: number) {
+    const tips = {
+      rice: {
+        6: 'Transplant kharif rice with 2-3 seedlings per hill',
+        10: 'Drain field gradually for grain hardening',
+        11: 'Harvest early morning to avoid grain shattering'
+      },
+      wheat: {
+        11: 'Sow wheat after rice harvest, prepare fine seedbed',
+        12: 'Apply first irrigation if no rain in 3 weeks',
+        3: 'Apply final irrigation during grain filling'
+      },
+      cotton: {
+        4: 'Pre-monsoon sowing for better establishment',
+        7: 'Monitor for pink bollworm during flowering',
+        10: 'First picking when bolls are fully opened'
+      },
+      sugarcane: {
+        2: 'Plant spring sugarcane for better yield',
+        10: 'Autumn planting in suitable areas',
+        12: 'Start harvesting mature cane'
+      },
+      potato: {
+        10: 'Plant seed potatoes in well-prepared beds',
+        12: 'Hill up plants and apply top dressing',
+        1: 'Harvest early varieties'
+      }
+    }
+    return tips[crop]?.[month] ? [tips[crop][month]] : []
+  }
+  
+  private static getLocationTips(location: string, crop: string) {
+    const loc = location.toLowerCase()
+    if (loc.includes('punjab') || loc.includes('haryana')) {
+      return [`Use mechanization for ${crop} - common in Punjab/Haryana region`]
+    }
+    if (loc.includes('kerala') || loc.includes('tamil nadu')) {
+      return [`Ensure good drainage for ${crop} in high rainfall areas`]
+    }
+    if (loc.includes('rajasthan') || loc.includes('gujarat')) {
+      return [`Use drip irrigation for ${crop} in arid regions`]
+    }
+    if (loc.includes('west bengal') || loc.includes('bihar')) {
+      return [`Plan for flood management in ${crop} cultivation`]
+    }
+    if (loc.includes('maharashtra')) {
+      return [`Consider intercropping with ${crop} for better returns`]
+    }
+    return [`Adapt ${crop} practices to local climate conditions`]
   }
 
   private static getFallbackRecommendation(crop: string) {
