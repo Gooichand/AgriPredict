@@ -508,7 +508,7 @@ export default function CropSetupPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50 relative">
+    <div className="min-h-screen relative" style={{backgroundColor: '#f5fbf8'}}>
       {/* Background Image Layer - Added at the bottom layer as requested */}
       <div className="absolute inset-0 z-0">
         <div 
@@ -518,30 +518,30 @@ export default function CropSetupPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 to-yellow-800/20 backdrop-blur-sm" />
       </div>
       
-      <nav className="bg-gradient-to-r from-green-700 to-yellow-600 text-white p-4 shadow-lg relative z-10">
+      <nav className="p-4 shadow-lg relative z-10" style={{backgroundColor: '#1e5631', color: '#ffffff'}}>
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center gap-2">🌾 KISAN SAFE 🚜</h1>
           <div className="flex gap-6">
-            <a href="/crop-setup" className="hover:text-yellow-200 font-semibold">Home</a>
-            <a href="/about" className="hover:text-yellow-200">About</a>
-            <a href="/contact" className="hover:text-yellow-200">Helplines</a>
-            <a href="/news" className="hover:text-yellow-200">News</a>
+            <a href="/crop-setup" className="hover:opacity-80 font-semibold" style={{color: '#ffffff'}}>Home</a>
+            <a href="/about" className="hover:opacity-80" style={{color: '#ffffff'}}>About</a>
+            <a href="/contact" className="hover:opacity-80" style={{color: '#ffffff'}}>Helplines</a>
+            <a href="/news" className="hover:opacity-80" style={{color: '#ffffff'}}>News</a>
           </div>
         </div>
       </nav>
 
       <main className="container mx-auto p-6 flex items-center justify-center min-h-[80vh] relative z-10">
-        <div className="bg-white/20 backdrop-blur-lg p-8 rounded-xl shadow-2xl border-2 border-white/30 w-full max-w-lg text-base relative overflow-hidden">
+        <div className="p-8 rounded-xl shadow-2xl w-full max-w-lg text-base relative overflow-hidden" style={{backgroundColor: '#ffffff'}}>
           {/* Content */}
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-6 text-center uppercase text-white backdrop-blur-md bg-black/20 p-4 rounded-lg border border-white/20 flex items-center justify-center gap-2">
+            <h2 className="text-3xl font-bold mb-6 text-center uppercase p-4 rounded-lg flex items-center justify-center gap-2" style={{color: '#2c3e2d'}}>
               🌱 Tell us about your farm 🌾
             </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">🏡 Where is your farm located?</label>
-              <p className="text-xs text-white mb-3">
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🏡 Where is your farm located?</label>
+              <p className="text-xs mb-3" style={{color: '#2c3e2d'}}>
                 {isGettingLocation ? '📍 Getting your location...' : 'We automatically detected your location, or enter manually'}
               </p>
               
@@ -557,7 +557,8 @@ export default function CropSetupPage() {
                       setShowLocationList(true)
                     }}
                     onFocus={() => setShowLocationList(true)}
-                    className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
+                    className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    style={{backgroundColor: '#ffffff', borderColor: '#95a5a6', color: '#2c3e2d'}}
                     required
                   />
                   {isGettingLocation && (
@@ -599,7 +600,8 @@ export default function CropSetupPage() {
                   type="button"
                   onClick={getDeviceLocation}
                   disabled={isGettingLocation}
-                  className="w-full bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-600 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                  className="w-full px-4 py-2 rounded-lg text-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                  style={{backgroundColor: '#3498db', color: '#ffffff'}}
                 >
                   {isGettingLocation ? '📍 Getting Location...' : '🔄 Refresh My Location'}
                 </button>
@@ -613,7 +615,7 @@ export default function CropSetupPage() {
             </div>
 
             <div className="relative">
-              <label className="block text-sm font-medium mb-2 text-white">🌾 What crop are you growing?</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🌾 What crop are you growing?</label>
               <input
                 type="text"
                 placeholder="Search for your crop (e.g., Rice, Wheat, Tomato)"
@@ -624,7 +626,8 @@ export default function CropSetupPage() {
                   setShowCropList(true)
                 }}
                 onFocus={() => setShowCropList(true)}
-                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
+                className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                style={{backgroundColor: '#ffffff', borderColor: '#95a5a6', color: '#2c3e2d'}}
                 required
               />
               {showCropList && (
@@ -656,20 +659,22 @@ export default function CropSetupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">🚜 Farm Size (acres)</label>
+              <label className="block text-sm font-medium mb-2" style={{color: '#2c3e2d'}}>🚜 Farm Size (acres)</label>
               <input
                 type="number"
                 placeholder="Enter farm size"
                 value={farmSize}
                 onChange={(e) => setFarmSize(e.target.value)}
-                className="w-full p-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50 text-gray-800 placeholder-gray-500"
+                className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                style={{backgroundColor: '#ffffff', borderColor: '#95a5a6', color: '#2c3e2d'}}
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-green-600 to-yellow-500 text-white p-3 rounded-lg hover:from-green-700 hover:to-yellow-600 font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="w-full p-3 rounded-lg font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200 hover:opacity-90"
+              style={{backgroundColor: '#3498db', color: '#ffffff'}}
             >
               Get Predictions
             </button>
