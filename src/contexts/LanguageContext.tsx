@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 const translations = {
   en: {
+    selectLanguage: 'Select Language',
     title: 'Kisan Safe',
     home: 'Home',
     about: 'About',
@@ -48,6 +49,7 @@ const translations = {
     latestNews: 'Latest News'
   },
   hi: {
+    selectLanguage: 'भाषा चुनें',
     title: 'किसान सेफ',
     home: 'होम',
     about: 'हमारे बारे में',
@@ -92,6 +94,7 @@ const translations = {
     latestNews: 'ताजा खबरें'
   },
   te: {
+    selectLanguage: 'భాష ఎంచుకోండి',
     title: 'కిసాన్ సేఫ్',
     home: 'హోమ్',
     about: 'మా గురించి',
@@ -132,6 +135,7 @@ const translations = {
     latestNews: 'తాజా వార్తలు'
   },
   ta: {
+    selectLanguage: 'மொழி தேர்வு செய்க',
     title: 'கிசான் சேஃப்',
     home: 'முகப்பு',
     about: 'எங்களைப் பற்றி',
@@ -172,6 +176,7 @@ const translations = {
     latestNews: 'சமீபத்திய செய்திகள்'
   },
   bn: {
+    selectLanguage: 'ভাষা নির্বাচন করুন',
     title: 'কিসান সেফ',
     home: 'হোম',
     about: 'আমাদের সম্পর্কে',
@@ -205,6 +210,7 @@ const translations = {
     latestNews: 'সর্বশেষ সংবাদ'
   },
   gu: {
+    selectLanguage: 'ભાષા પસંદ કરો',
     title: 'કિસાન સેફ',
     home: 'હોમ',
     about: 'અમારા વિશે',
