@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/contexts/AuthContext'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { LocationService } from '@/lib/locationService'
 import { validateCropLocation } from '@/lib/cropLocationValidator'
@@ -32,6 +33,7 @@ export default function CropSetupPage() {
   
   const router = useRouter()
   const { t } = useLanguage()
+  const { user, isGuest } = useAuth()
 
   const crops = [
     // Cereals & Grains
@@ -702,12 +704,24 @@ export default function CropSetupPage() {
             <h1 className="text-2xl font-bold">{t('title')}</h1>
           </div>
           <div className="flex items-center gap-6">
+            {user && (
+              <div className="text-sm">
+                Welcome, {user.name}!
+              </div>
+            )}
+            {isGuest && (
+              <div className="text-sm opacity-75">
+                Guest Mode
+              </div>
+            )}
             <div className="flex gap-6">
               <a href="/crop-setup" className="hover:opacity-80 font-semibold" style={{color: '#ffffff'}}>{t('home')}</a>
               <a href="/about" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('about')}</a>
               <a href="/contact" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('helplines')}</a>
               <a href="/news" className="hover:opacity-80" style={{color: '#ffffff'}}>{t('news')}</a>
               <a href="/crop-advisory" className="hover:opacity-80" style={{color: '#ffffff'}}>Crop Advisory</a>
+              {!isGuest && user && <a href="/profile" className="hover:opacity-80" style={{color: '#ffffff'}}>👤 Profile</a>}
+              {isGuest && <a href="/login" className="hover:opacity-80" style={{color: '#ffffff'}}>⚙️ Login/Signup</a>}
             </div>
             <LanguageSwitcher />
           </div>

@@ -7,6 +7,7 @@ import AIRecommendations from './AIRecommendations'
 import CropHealthAnalysis from './CropHealthAnalysis'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/contexts/AuthContext'
 import LanguageSwitcher from './LanguageSwitcher'
 
 interface FarmData {
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [showWarningPopup, setShowWarningPopup] = useState(false)
   const [cropWarning, setCropWarning] = useState<{isWarning: boolean, message: string, severity: string} | null>(null)
   const { t } = useLanguage()
+  const { user, isGuest } = useAuth()
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({})
 
   useEffect(() => {
@@ -293,6 +295,16 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="flex items-center gap-6">
+            {user && (
+              <div className="text-sm">
+                Welcome, {user.name}!
+              </div>
+            )}
+            {isGuest && (
+              <div className="text-sm opacity-75">
+                Guest Mode
+              </div>
+            )}
             <div className="flex gap-6">
               <Link href="/crop-setup" className="hover:text-yellow-200">{t('home')}</Link>
               <Link href="/about" className="hover:text-yellow-200">{t('about')}</Link>
@@ -300,6 +312,8 @@ export default function Dashboard() {
               <Link href="/news" className="hover:text-yellow-200">{t('news')}</Link>
               <Link href="/crop-advisory" className="hover:text-yellow-200">Crop Advisory</Link>
               <Link href="/dashboard" className="hover:text-yellow-200 font-semibold">{t('dashboard')}</Link>
+              {!isGuest && <Link href="/profile" className="hover:text-yellow-200">👤 Profile</Link>}
+              {isGuest && <Link href="/login" className="hover:text-yellow-200">⚙️ Login/Signup</Link>}
             </div>
             <LanguageSwitcher />
           </div>
