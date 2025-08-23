@@ -26,7 +26,7 @@ export default function LanguageSelector() {
         <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border z-50 min-w-48">
           <div className="p-2">
             <div className="text-xs font-medium text-gray-500 px-3 py-2 border-b">
-              {t('selectLanguage')}
+              {t('selectLanguage' as any)}
             </div>
             {languages.map((lang) => (
               <button
